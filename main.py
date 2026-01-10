@@ -38,8 +38,8 @@ class MainApplication(QWidget):
 
     def design_layouts(self):
         self.scenes.addWidget(self.welcome_scene)
-        self.scenes.addWidget(self.welcome_scene)
-        self.scenes.setCurrentIndex(0)
+        self.scenes.addWidget(self.home_scene)
+        self.scenes.setCurrentIndex(1)
 
         self.main_layout = QVBoxLayout()
         self.main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -72,7 +72,8 @@ class MainApplication(QWidget):
     def request_change_scene(self, new_scene):
         if new_scene not in self.config.scenes_available:
             raise BaseException("SCENE NOT VALID")
-        #self.scenes.setCurrentIndex(self.config.scenes_available[new_scene])
+        print("change")
+        self.scenes.setCurrentIndex(self.config.scenes_available[new_scene])
 
 app = QApplication([])
 
