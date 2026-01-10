@@ -4,6 +4,8 @@ from PyQt6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 
     QStackedWidget,
+    QStackedLayout,
+    QPushButton
 )
 from scenes import (
     welcome_scene,
@@ -12,7 +14,15 @@ from scenes import (
     detailed_scene,
 )
 from config import ConfigurationClass
-    
+
+class UIButton(QPushButton):
+    def __init__(self, text, font):
+        """
+        font -> QFont Type
+        """
+        super().__init__(text=text)
+        self.setFont(font)
+        
 class MainApplication(QWidget):
     def __init__(self):
         super().__init__()
@@ -29,26 +39,62 @@ class MainApplication(QWidget):
     Creating/Setup QT Window
     """
     def create_widgets(self):
+        self.menu_widget = QWidget()
+        self.menu_button_holder_widget = QWidget()
+        self.menu_button = UIButton("MENU", self.config.default_font)
+
+        self.home_button = UIButton("Home", self.config.default_font_small)
+        self.warnings_button = UIButton("Warnings", self.config.default_font_small)
+        self.detailed_button = UIButton("Detailed", self.config.default_font_small)
+
         self.scenes = QStackedWidget()
         self.welcome_scene = welcome_scene.Scene()
         self.home_scene = home_scene.Scene()
 
     def design_widgets(self):
-        pass
+        self.menu_button.setMaximumSize(35,35)
+        self.menu_button.setMinimumSize(0,35)
+        self.menu_button_holder_widget.setMaximumSize(50,50)
+        self.menu_widget.setVisible(False)
+        #later
+        #self.menu_button.setVisible(True)
 
     def design_layouts(self):
+        self.main_layout = QStackedLayout()
+        self.main_layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
+
         self.scenes.addWidget(self.welcome_scene)
         self.scenes.addWidget(self.home_scene)
         self.scenes.setCurrentIndex(1)
+        
+        menu_button_holder_layout = QVBoxLayout()
+        menu_button_holder_layout.setAlignment(Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignLeft)
+        menu_button_holder_layout.setContentsMargins(15,15,0,0)
+        menu_button_holder_layout.setSpacing(0)
+        menu_button_holder_layout.addWidget(self.menu_button)
+        self.menu_button_holder_widget.setLayout(menu_button_holder_layout)
 
-        self.main_layout = QVBoxLayout()
-        self.main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        menu_widget_layout = QVBoxLayout()
+        menu_widget_layout.setAlignment(Qt.AlignmentFlag.AlignCenter|Qt.AlignmentFlag.AlignLeft)
+        menu_widget_layout.setContentsMargins(15,0,0,0)
+        menu_widget_layout.setSpacing(5)
+        menu_widget_layout.addWidget(self.home_button)
+        menu_widget_layout.addWidget(self.warnings_button)
+        menu_widget_layout.addWidget(self.detailed_button)
+        self.menu_widget.setLayout(menu_widget_layout)
+
         self.main_layout.addWidget(self.scenes)
+        self.main_layout.addWidget(self.menu_widget)
+        self.main_layout.addWidget(self.menu_button_holder_widget)
 
         self.setLayout(self.main_layout)
 
     def connect_events(self):
         self.welcome_scene.confirm_button.clicked.connect(self.welcome_confirm_button_clicked)
+        self.menu_button.clicked.connect(self.menu_button_clicked)
+        
+    def menu_button_clicked(self):
+        self.menu_widget.setVisible(not self.menu_widget.isVisible())
     """
     Cross-scene events:
         Events that occur within another scene that require changes to MainApplication QWidget.
