@@ -1,6 +1,4 @@
 # Weather-Application
-Creation of a basic Weather Application using Python with QT v6 and API calling (OpenWeatherAPI).
-
 Creation of a basic Weather Application, with some quirks inspired by [CARROT](https://www.meetcarrot.com/weather/), a companion-based weather mobile application with some humor added as personality. Weather Application was created using Python with QT6 and API calls from [National Weather Service](https://www.weather.gov/) (NWS) and [Geocode-xyz](https://geocode.xyz/). Features include:
 - Selecting a location (Which can be saved!)
 - Getting weather data at the "current" moment
