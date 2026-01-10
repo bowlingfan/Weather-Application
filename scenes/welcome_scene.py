@@ -22,7 +22,7 @@ class Scene(QWidget):
 
     def create_widgets(self):
         self.header = QLabel("Hi!")
-        self.guide = QLabel("Type a location and press confirm to get started.")
+        self.guide = QLabel("Type a location in the United States and press confirm to get started.")
         self.location_text_box = QLineEdit()
         self.confirm_button = QPushButton("CONFIRM")
 
