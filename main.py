@@ -50,6 +50,7 @@ class MainApplication(QWidget):
         self.scenes = QStackedWidget()
         self.welcome_scene = welcome_scene.Scene()
         self.home_scene = home_scene.Scene()
+        self.warnings_scene = warnings_scene.Scene()
 
     def design_widgets(self):
         self.menu_button.setMaximumSize(35,35)
@@ -61,12 +62,21 @@ class MainApplication(QWidget):
 
     def design_layouts(self):
         self.main_layout = QStackedLayout()
-        self.main_layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
+        self.main_layout.setStackingMode(QStackedLayout.StackingMode.StackAll) 
 
+        """
+        scenes setup
+        """
         self.scenes.addWidget(self.welcome_scene)
         self.scenes.addWidget(self.home_scene)
-        self.scenes.setCurrentIndex(1)
-        
+        self.scenes.addWidget(self.warnings_scene)
+        self.scenes.setCurrentIndex(2)        
+        """
+        menu widget/button setup.
+
+        local variables: menu_button_holder_layout & menu_widget_layout
+        since they SHOULDN'T BE used other than to organize QT widgets.
+        """
         menu_button_holder_layout = QVBoxLayout()
         menu_button_holder_layout.setAlignment(Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignLeft)
         menu_button_holder_layout.setContentsMargins(15,15,0,0)
@@ -83,6 +93,9 @@ class MainApplication(QWidget):
         menu_widget_layout.addWidget(self.detailed_button)
         self.menu_widget.setLayout(menu_widget_layout)
 
+        """
+        main page setup
+        """
         self.main_layout.addWidget(self.scenes)
         self.main_layout.addWidget(self.menu_widget)
         self.main_layout.addWidget(self.menu_button_holder_widget)

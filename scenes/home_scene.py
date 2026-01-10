@@ -24,11 +24,11 @@ class Scene(QWidget):
         self.create_widgets()
         self.design_widgets()
         self.design_layouts()
-        self.connect_events()
+        #self.connect_events()
 
     def create_widgets(self):
         self.location_header = TextLabel("Location Test", self.config.default_font)
-        self.temperature_display = TextLabel("75°",self.config.make_font(80))
+        self.temperature_display = TextLabel("75°",self.config.make_font(self.config.home_config.temperature_display_font_size))
         # detailed
         self.feels_like_display = TextLabel("Feels like: ", self.config.default_font_small)
         self.preciptation_display = TextLabel("Preciptation: ", self.config.default_font_small)
@@ -40,7 +40,7 @@ class Scene(QWidget):
         self.location_header.setFont(self.config.default_font)
 
         self.temperature_display.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignVCenter)
-        self.temperature_display.setMaximumHeight(300)
+        self.temperature_display.setMaximumHeight(self.config.window_width//2)
 
         self.message.setAlignment(Qt.AlignmentFlag.AlignCenter)
 

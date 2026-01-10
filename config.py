@@ -8,6 +8,14 @@ default_font_directory = "resource/Roboto-Light.ttf"
 """
 CLASSES/CONFIGS
 """
+class WarningConfig():
+    def __init__(self):
+        self.no_weather_warning_messages = [
+            "You're safe for this one."
+        ]
+class HomeConfig():
+    def __init__(self):
+        self.temperature_display_font_size = 80
 class WelcomeConfig():
     def __init__(self):
         self.user_action_textbox_size = QSize(300,35)
@@ -48,6 +56,8 @@ class ConfigurationClass():
 
         # configs for specific scenes
         self.welcome_config = WelcomeConfig()
+        self.home_config = HomeConfig()
+        self.warnings_config = WarningConfig()
     def make_default_QFont(self):
         """
         Returns QFont object with default settings.
