@@ -7,7 +7,6 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLineEdit 
 )
-from PyQt6.QtGui import QFont, QFontDatabase
 from config import ConfigurationClass
 
 class Scene(QWidget):
@@ -18,7 +17,7 @@ class Scene(QWidget):
         self.create_widgets()
         self.design_widgets()
         self.design_layouts()
-        self.connect_events()
+        #self.connect_events()
 
     def create_widgets(self):
         self.header = QLabel("Hi!")
@@ -50,6 +49,3 @@ class Scene(QWidget):
         self.main_layout.addLayout(self.user_interaction_layout)
         
         self.setLayout(self.main_layout)
-
-    def connect_events(self):
-        pass
