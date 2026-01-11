@@ -47,10 +47,13 @@ class Period():
 class WeatherForecastData():
     def __init__(self, json):
         self.periods = []
+        self.index_read = 0
         self.read_json(json)
     def read_json(self, json):
         periods = json['properties']['periods']
-        if periods[0]['name'] != 'Today':
+        #print(periods)
+        # we have the same day next week from API data.
+        if periods[0]['name'] == 'Tonight':
             day_name = datetime.datetime.now()
             first_day_period = Period()
             first_day_period.read_night_period(periods[0])
@@ -78,3 +81,5 @@ class WeatherForecastData():
                 current_period.read_night_period(periods[index*2+1])
                 current_period.name = day_name.strftime("%A")
                 self.periods.append(current_period)
+    def get_period_from_index(self):
+        return self.periods[self.index_read]

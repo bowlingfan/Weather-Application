@@ -61,6 +61,7 @@ class MainApplication(QWidget):
         self.menu_button.setMinimumSize(0,35)
         self.menu_button_holder_widget.setMaximumSize(50,50)
         self.menu_widget.setVisible(False)
+        self.menu_widget.setMaximumWidth(100)
         #later
         #self.menu_button.setVisible(True)
 
@@ -113,6 +114,8 @@ class MainApplication(QWidget):
         self.home_button.clicked.connect(self.home_button_clicked)
         self.warnings_button.clicked.connect(self.warnings_button_clicked)
         self.details_button.clicked.connect(self.details_button_clicked)
+        self.details_scene.increment_day_button.clicked.connect(self.increment_button_clicked)
+        self.details_scene.decrement_day_button.clicked.connect(self.decrement_button_clicked)
 
     def menu_button_clicked(self):
         self.menu_widget.setVisible(not self.menu_widget.isVisible())
@@ -122,6 +125,16 @@ class MainApplication(QWidget):
         self.request_change_scene("warnings_scene")
     def details_button_clicked(self):
         self.request_change_scene("details_scene")
+    def increment_button_clicked(self):
+        self.config.weather_forecast_data.index_read += 1
+        if self.config.weather_forecast_data.index_read >= len(self.config.weather_forecast_data.periods):
+            self.config.weather_forecast_data.index_read = 0
+        self.update_UI_weather_forecast_data()
+    def decrement_button_clicked(self):
+        self.config.weather_forecast_data.index_read -= 1
+        if self.config.weather_forecast_data.index_read < 0:
+            self.config.weather_forecast_data.index_read = len(self.config.weather_forecast_data.periods)-1
+        self.update_UI_weather_forecast_data()
     """
     Cross-scene events:
         Events that occur within another scene that require changes to MainApplication QWidget.
@@ -146,10 +159,38 @@ class MainApplication(QWidget):
 
         # setup UI
         self.update_UI_geocode_data()
+        self.update_UI_weather_forecast_data()
         self.update_UI_weather_forecast_hourly_data()
 
     def update_UI_geocode_data(self):
         self.home_scene.location_header.setText(self.config.geocode_data.get_location())
+
+    def update_UI_weather_forecast_data(self):
+        self.details_scene.temperature_high_display.setText("")
+        self.details_scene.temperature_low_display.setText("")
+
+        day_data = self.config.weather_forecast_data.get_period_from_index()
+        extra_data = datetime.datetime.now() + datetime.timedelta(days=self.config.weather_forecast_data.index_read)
+        extra_data = extra_data.strftime("%B %d")
+        if int(extra_data[-1]) == 1 and int(extra_data[-2]) != 1:
+            extra_data += "st"
+        elif int(extra_data[-1]) == 2 and int(extra_data[-2]) != 1:
+            extra_data += "nd"
+        elif int(extra_data[-1]) == 3 and int(extra_data[-2]) != 1:
+            extra_data += "rd"
+        else:
+            extra_data += "th"
+        self.details_scene.day_display.setText(f"{day_data.name} - {extra_data}")
+        self.details_scene.precipitation_chance_display.setText(f"precip {day_data.precipitation_probability}%")
+        self.details_scene.wind_display.setText(f"{day_data.wind_speed} {day_data.wind_direction} winds")
+        self.details_scene.forecasted_weather_display.setText(day_data.forecasted_weather)
+        self.details_scene.precipitation_bar.setFixedHeight(int(((self.config.window_width//2)/100)*day_data.precipitation_probability))
+
+        if day_data.high_temperature is not None:
+            self.details_scene.temperature_high_display.setText(f"high temperature {day_data.high_temperature}°")
+        if day_data.low_temperature is not None:
+            self.details_scene.temperature_low_display.setText(f"low temperature {day_data.low_temperature}°")
+
     def update_UI_weather_forecast_hourly_data(self):
         current_hour = datetime.datetime.now().hour
         current_hour_data = None
@@ -164,7 +205,7 @@ class MainApplication(QWidget):
         self.home_scene.forecast_display.setText(current_hour_data.forecasted_weather)
         self.home_scene.preciptation_display.setText(f"Precipitation: {current_hour_data.precipitation_probability}%")
         self.home_scene.wind_display.setText(f"Wind: {current_hour_data.wind_speed} {current_hour_data.wind_direction}")
-        #self.home_scene.message
+        self.home_scene.message.setText(self.config.home_config.get_message_from_forecast(current_hour_data.forecasted_weather))
     
     """
     Utility functions 

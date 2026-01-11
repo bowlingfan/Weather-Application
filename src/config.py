@@ -1,6 +1,7 @@
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QFont, QFontDatabase
 import requests
+import random
 from data_read.geocode_data import GeocodeData
 from data_read.weather_forecast_data import WeatherForecastData
 from data_read.weather_forecast_hourly_data import WeatherForecastHourlyData
@@ -21,8 +22,100 @@ class WarningConfig():
             "You're safe for this one."
         ]
 class HomeConfig():
+    forecast_msgs = {
+        "sunny":[
+            "Better hope the sun keeps up.",
+            "Nice today, ain't it?",
+            "It's your lucky day.. Mostly.",
+            "Don't anticipate the continued sunniness.",
+            "This is pretty boring. I hope the weather shakes up.",
+        ],
+        "light rain":{
+            "Chance":[
+                "An oddity.",
+                "Don't you want a drizzle?",
+                "Does some rain = cold?",
+                "I wish it happened.",
+            ],
+            "NoChance":[
+                "Do you feel the droplets pecking you?",
+                "My favorite weather.",
+                "Let the rain drop!",
+                "It may get rougher. I hope it does. :)",
+                "Wear a jacket. That might save you."
+            ],
+        },
+        "rain":{
+            "Chance":[
+                "I don't think you'll like this one.",
+                "How do you feel if I asked it to rain a bit harshly?",
+                "Oh! Please let it fall!",
+                "Might be a rough one. Prepare yourself!",
+            ],
+            "NoChance":[
+                "Tip: REALLY wear a jacket.",
+                "I heard acid is in the rain droplets, is that true?",
+                "Weee! The grass will grow again!",
+                "If you're disappointed, too bad.",
+                "Tip: Stay inside. Or don't, take the advice."
+            ],
+        },
+        "light snow":{
+            "Chance":[
+                "Okay, snowing.. a little too far.",
+                "If you want me to stop it; how?",
+                "Even though I'm delusional, I think this is a bad sign.",
+            ],
+            "NoChance":[
+                "You won't cause a car accident, right?",
+                "Don't slip. Wear boots. Simple.",
+                "Probably ain't enough for a snowman, but for sure an ice angel!",
+                "It hurts, a little bit.",
+            ],
+        },
+        "snow":{
+            "Chance":[
+                "OKAY THIS IS SEVERE, I SHOULD HIBERNATE.",
+                "Extremely cold soon.",
+                "Is this Christmas at home?",
+            ],
+            "NoChance":[
+                "[Weather APP failed to run.]",
+                "AHHHHH!! IT HURTS! ITS FREEZING! I'M GETTING FROSTBITE!",
+                "Be grateful it isn't a natural disaster.",
+                "This, is just fine.",
+            ],
+        },
+        "default":[
+            "What am I even reading?",
+            "Does not.. compute.",
+            "Fake weather, don't believe it! (I'm kidding.)",
+            "Special Weather perhaps.",
+        ],
+    }
     def __init__(self):
         self.temperature_display_font_size = 80
+        
+    def get_message_from_forecast(self, forecast):
+        msgs = None
+        forecast = forecast.lower()
+        current_forecast = ""
+        for forecast_possible in HomeConfig.forecast_msgs.keys():
+            current_forecast = forecast_possible.lower()
+            if current_forecast in forecast:
+                msgs=HomeConfig.forecast_msgs[current_forecast]
+                break
+            if current_forecast == "default":
+                msgs=HomeConfig.forecast_msgs[current_forecast]
+                break
+        if type(msgs).__name__ == "dict":
+            if "chance" in current_forecast:
+                current_forecast="Chance"
+            else:
+                current_forecast="NoChance"
+            return random.choice(msgs[current_forecast])
+        else:
+            return random.choice(msgs)
 class WelcomeConfig():
     def __init__(self):
         self.user_action_textbox_size = QSize(300,35)
@@ -96,7 +189,7 @@ class ConfigurationClass():
         geocode_data = api_call_holder.json()
         # Check Cases
         if 'error' in geocode_data:
-            return (1,  f'An error occurred. Please try again.')
+            return (1,  f'An error occurred. Try a different location.')
         # for geocode specifically, if throttled occurs all JSON data is encoded to "Throttled! .
         # for this in particular we'll retry the call 5 times, if it fails, then kill/ask to retry.
         elif geocode_data['latt'][:len("Throttled!")] == "Throttled!":
