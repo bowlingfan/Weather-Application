@@ -8,12 +8,14 @@ from PyQt6.QtWidgets import (
     QPushButton
 )
 from scenes import (
+    details_scene,
     welcome_scene,
     home_scene,
     warnings_scene,
-    detailed_scene,
 )
 from config import ConfigurationClass
+#import inspect
+#import os
 
 class UIButton(QPushButton):
     def __init__(self, text, font):
@@ -45,12 +47,13 @@ class MainApplication(QWidget):
 
         self.home_button = UIButton("Home", self.config.default_font_small)
         self.warnings_button = UIButton("Warnings", self.config.default_font_small)
-        self.detailed_button = UIButton("Detailed", self.config.default_font_small)
+        self.details_button = UIButton("Details", self.config.default_font_small)
 
         self.scenes = QStackedWidget()
         self.welcome_scene = welcome_scene.Scene()
         self.home_scene = home_scene.Scene()
         self.warnings_scene = warnings_scene.Scene()
+        self.details_scene = details_scene.Scene()
 
     def design_widgets(self):
         self.menu_button.setMaximumSize(35,35)
@@ -70,7 +73,8 @@ class MainApplication(QWidget):
         self.scenes.addWidget(self.welcome_scene)
         self.scenes.addWidget(self.home_scene)
         self.scenes.addWidget(self.warnings_scene)
-        self.scenes.setCurrentIndex(2)        
+        self.scenes.addWidget(self.details_scene)
+        self.scenes.setCurrentIndex(self.config.scenes_available["welcome_scene"])
         """
         menu widget/button setup.
 
@@ -90,7 +94,7 @@ class MainApplication(QWidget):
         menu_widget_layout.setSpacing(5)
         menu_widget_layout.addWidget(self.home_button)
         menu_widget_layout.addWidget(self.warnings_button)
-        menu_widget_layout.addWidget(self.detailed_button)
+        menu_widget_layout.addWidget(self.details_button)
         self.menu_widget.setLayout(menu_widget_layout)
 
         """
@@ -105,9 +109,18 @@ class MainApplication(QWidget):
     def connect_events(self):
         self.welcome_scene.confirm_button.clicked.connect(self.welcome_confirm_button_clicked)
         self.menu_button.clicked.connect(self.menu_button_clicked)
-        
+        self.home_button.clicked.connect(self.home_button_clicked)
+        self.warnings_button.clicked.connect(self.warnings_button_clicked)
+        self.details_button.clicked.connect(self.details_button_clicked)
+
     def menu_button_clicked(self):
         self.menu_widget.setVisible(not self.menu_widget.isVisible())
+    def home_button_clicked(self):
+        self.request_change_scene("home_scene")
+    def warnings_button_clicked(self):
+        self.request_change_scene("warnings_scene")
+    def details_button_clicked(self):
+        self.request_change_scene("details_scene")
     """
     Cross-scene events:
         Events that occur within another scene that require changes to MainApplication QWidget.
@@ -124,19 +137,21 @@ class MainApplication(QWidget):
         if result[0] != 0:
             self.welcome_scene.guide.setText(result[1])
         else:
-            self.request_change_scene("detailed_scene")
+            self.request_change_scene("home_scene")
     """
     Utility functions 
     """
     def request_change_scene(self, new_scene):
         if new_scene not in self.config.scenes_available:
             raise BaseException("SCENE NOT VALID")
-        print("change")
         self.scenes.setCurrentIndex(self.config.scenes_available[new_scene])
 
 app = QApplication([])
 
 main_window = MainApplication()
-
+#solves dilemma with text files randomly being open in other places
+#filename = inspect.getframeinfo(inspect.currentframe()).filename
+##path     = os.path.dirname(os.path.abspath(filename))
+#print(path)
 main_window.show()
 app.exec()

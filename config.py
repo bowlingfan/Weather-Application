@@ -8,6 +8,10 @@ default_font_directory = "resource/Roboto-Light.ttf"
 """
 CLASSES/CONFIGS
 """
+# °
+class DetailsConfig():
+    def __init__(self):
+        pass
 class WarningConfig():
     def __init__(self):
         self.no_weather_warning_messages = [
@@ -28,7 +32,7 @@ class ConfigurationClass():
             "welcome_scene":0,
             "home_scene":1,
             "warnings_scene":2,
-            "detailed_scene":3
+            "details_scene":3
         }
 
         self.default_font_size = 15
@@ -50,6 +54,7 @@ class ConfigurationClass():
         self.base_url_api_weather="https://api.weather.gov/points/"
         self.geocode_data=None
         self.weather_forecast_data=None
+        self.weather_forecast_hourly_data=None
 
         #todo later
         self.alerts_data=None
@@ -107,15 +112,25 @@ class ConfigurationClass():
             return (2, f'Weather data could not be retrieved. Please try again after one second.')
         weather_forecast_data = api_call_holder.json()
 
-        # Get location weather FORECAST data
         main_url=weather_forecast_data['properties']['forecast']
+        main_url_2=weather_forecast_data['properties']['forecastHourly']
+
+        # Get location weather FORECAST data
         api_call_holder = requests.get(main_url)
         # Throttled Error Case
         if api_call_holder.status_code == 403:
             return (2, f'Weather data could not be retrieved. Please try again after one second.')
         weather_forecast_data = api_call_holder.json()
 
+        # Get location weather FORECAST HOURLY data
+        api_call_holder = requests.get(main_url_2)
+        # Throttled Error Case
+        if api_call_holder.status_code == 403:
+            return (2, f'Weather data could not be retrieved. Please try again after one second.')
+        weather_forecast_hourly_data = api_call_holder.json()
+
         # If no errors show up, assume successful and set class variables.
         self.geocode_data = geocode_data
         self.weather_forecast_data = weather_forecast_data
+        self.weather_forecast_hourly_data = weather_forecast_hourly_data
         return (0, "")
