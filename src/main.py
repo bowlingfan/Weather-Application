@@ -161,6 +161,7 @@ class MainApplication(QWidget):
         self.update_UI_geocode_data()
         self.update_UI_weather_forecast_data()
         self.update_UI_weather_forecast_hourly_data()
+        self.update_UI_alerts_data()
 
     def update_UI_geocode_data(self):
         self.home_scene.location_header.setText(self.config.geocode_data.get_location())
@@ -206,6 +207,9 @@ class MainApplication(QWidget):
         self.home_scene.preciptation_display.setText(f"Precipitation: {current_hour_data.precipitation_probability}%")
         self.home_scene.wind_display.setText(f"Wind: {current_hour_data.wind_speed} {current_hour_data.wind_direction}")
         self.home_scene.message.setText(self.config.home_config.get_message_from_forecast(current_hour_data.forecasted_weather))
+
+    def update_UI_alerts_data(self):
+        self.warnings_scene.make_alerts(self.config.alerts_data, self.config.geocode_data)
     
     """
     Utility functions 

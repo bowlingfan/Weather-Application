@@ -5,6 +5,7 @@ import random
 from data_read.geocode_data import GeocodeData
 from data_read.weather_forecast_data import WeatherForecastData
 from data_read.weather_forecast_hourly_data import WeatherForecastHourlyData
+from data_read.alerts_data import AlertsData
 """
 PRIVATE VARIABLES IF NOT IN class.__init__()
 """
@@ -19,7 +20,9 @@ class DetailsConfig():
 class WarningConfig():
     def __init__(self):
         self.no_weather_warning_messages = [
-            "You're safe for this one."
+            "You're safe for this one.",
+            "Don't get too comfortable; you're just lucky.",
+            "You aren't being targetted by the weather gods right now."
         ]
 class HomeConfig():
     forecast_msgs = {
@@ -140,6 +143,7 @@ class ConfigurationClass():
         """
         base_url_api_geocoder -> {suggested location}?geoit=JSON
         base_url_api_weather -> {latitude},{longitude}
+        base_url_api_alerts -> {zone}
 
         check of the following:
         - error
@@ -148,6 +152,8 @@ class ConfigurationClass():
         """
         self.base_url_api_geocoder="https://geocode.xyz/"
         self.base_url_api_weather="https://api.weather.gov/points/"
+        self.base_url_api_alerts="https://api.weather.gov/alerts/active/zone/"
+
         self.geocode_data=None
         self.weather_forecast_data=None
         self.weather_forecast_hourly_data=None
@@ -210,6 +216,8 @@ class ConfigurationClass():
 
         main_url=weather_forecast_data['properties']['forecast']
         main_url_2=weather_forecast_data['properties']['forecastHourly']
+        main_url_3=weather_forecast_data['properties']['forecastZone']
+        main_url_3=self.base_url_api_alerts+main_url_3[main_url_3.find('/',-10)+1:]
 
         # Get location weather FORECAST data
         api_call_holder = requests.get(main_url)
@@ -225,8 +233,16 @@ class ConfigurationClass():
             return (2, f'Weather data could not be retrieved. Please try again after one second.')
         weather_forecast_hourly_data = api_call_holder.json()
 
+        # Get location forecast ALERTS data
+        api_call_holder = requests.get(main_url_3)
+        # Throttled Error Case
+        if api_call_holder.status_code == 403:
+            return (2, f'Weather data could not be retrieved. Please try again after one second.')
+        alerts_data = api_call_holder.json()
+
         # If no errors show up, assume successful and set class variables.
         self.geocode_data = GeocodeData(geocode_data)
         self.weather_forecast_data = WeatherForecastData(weather_forecast_data)
         self.weather_forecast_hourly_data = WeatherForecastHourlyData(weather_forecast_hourly_data)
+        self.alerts_data = AlertsData(alerts_data)
         return (0, "")

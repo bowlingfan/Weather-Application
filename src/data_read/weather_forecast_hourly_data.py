@@ -1,4 +1,4 @@
-# read weather forecasted JSON and store in more readable format for use
+# read weather forecasted hourly JSON and store in more readable format for use
 import datetime
 class HourData():
     def __init__(self):
@@ -27,6 +27,9 @@ class HourData():
         self.forecasted_weather = data['shortForecast']
 
     def __str__(self):
+        """
+        DEBUG ONLY
+        """
         return f"hour: {self.hour}\ntemperature: {self.temperature}\nprecipitation: {self.precipitation_probability}\nwind: {self.wind_speed} {self.wind_direction}\nforecast: {self.forecasted_weather}\n"
 
 class WeatherForecastHourlyData():

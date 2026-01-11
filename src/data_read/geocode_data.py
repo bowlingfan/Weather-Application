@@ -1,4 +1,4 @@
-# read weather forecasted JSON and store in more readable format for use
+# read geocode JSON and store in more readable format for use
 
 class GeocodeData():
     def __init__(self, json):
