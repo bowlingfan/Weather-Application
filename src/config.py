@@ -1,6 +1,9 @@
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QFont, QFontDatabase
 import requests
+from data_read.geocode_data import GeocodeData
+from data_read.weather_forecast_data import WeatherForecastData
+from data_read.weather_forecast_hourly_data import WeatherForecastHourlyData
 """
 PRIVATE VARIABLES IF NOT IN class.__init__()
 """
@@ -130,7 +133,7 @@ class ConfigurationClass():
         weather_forecast_hourly_data = api_call_holder.json()
 
         # If no errors show up, assume successful and set class variables.
-        self.geocode_data = geocode_data
-        self.weather_forecast_data = weather_forecast_data
-        self.weather_forecast_hourly_data = weather_forecast_hourly_data
+        self.geocode_data = GeocodeData(geocode_data)
+        self.weather_forecast_data = WeatherForecastData(weather_forecast_data)
+        self.weather_forecast_hourly_data = WeatherForecastHourlyData(weather_forecast_hourly_data)
         return (0, "")

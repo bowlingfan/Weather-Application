@@ -14,6 +14,7 @@ from scenes import (
     warnings_scene,
 )
 from config import ConfigurationClass
+import datetime
 #import inspect
 #import os
 
@@ -130,14 +131,41 @@ class MainApplication(QWidget):
         if location_text == "":
             self.welcome_scene.guide.setText("Provide a location before pressing confirm.")
             return
+        self.get_api_data_and_setup_ui(location_text)
+
+    def get_api_data_and_setup_ui(self, location_text):
         """
         self.config.get_API_data > (error_code [0], msg [1])
         """
         result = self.config.get_API_data(location_text)
         if result[0] != 0:
             self.welcome_scene.guide.setText(result[1])
-        else:
-            self.request_change_scene("home_scene")
+            return
+        
+        self.request_change_scene("home_scene")
+
+        # setup UI
+        self.update_UI_geocode_data()
+        self.update_UI_weather_forecast_hourly_data()
+
+    def update_UI_geocode_data(self):
+        self.home_scene.location_header.setText(self.config.geocode_data.get_location())
+    def update_UI_weather_forecast_hourly_data(self):
+        current_hour = datetime.datetime.now().hour
+        current_hour_data = None
+
+        current_timezone_string = datetime.datetime.now(datetime.timezone.utc).astimezone()
+        current_timezone_diff_utc = int(current_timezone_string.strftime("%z").strip('0'))
+
+        for hour_data in self.config.weather_forecast_hourly_data.hours:
+            if self.proper_hour(hour_data.hour, self.config.weather_forecast_hourly_data.timezone_utc_diff, current_timezone_diff_utc) == current_hour:
+                current_hour_data = hour_data
+        self.home_scene.temperature_display.setText(f"{current_hour_data.temperature}°")
+        self.home_scene.forecast_display.setText(current_hour_data.forecasted_weather)
+        self.home_scene.preciptation_display.setText(f"Precipitation: {current_hour_data.precipitation_probability}%")
+        self.home_scene.wind_display.setText(f"Wind: {current_hour_data.wind_speed} {current_hour_data.wind_direction}")
+        #self.home_scene.message
+    
     """
     Utility functions 
     """
@@ -145,6 +173,15 @@ class MainApplication(QWidget):
         if new_scene not in self.config.scenes_available:
             raise BaseException("SCENE NOT VALID")
         self.scenes.setCurrentIndex(self.config.scenes_available[new_scene])
+
+    def proper_hour(self, data_hour, data_timezone, current_timezone_diff_utc):
+        timezone_diff = current_timezone_diff_utc-data_timezone
+        data_hour += timezone_diff
+        if data_hour > 23:
+            data_hour -= 23
+        elif data_hour < 0:
+            data_hour += 23
+        return data_hour
 
 app = QApplication([])
 
