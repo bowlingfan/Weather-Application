@@ -20,7 +20,7 @@ class DetailsConfig():
 class WarningConfig():
     def __init__(self):
         self.no_weather_warning_messages = [
-            "You're safe for this one.",
+            "You're safe for today. Hooray!",
             "Don't get too comfortable; you're just lucky.",
             "You aren't being targetted by the weather gods right now."
         ]
@@ -32,6 +32,20 @@ class HomeConfig():
             "It's your lucky day.. Mostly.",
             "Don't anticipate the continued sunniness.",
             "This is pretty boring. I hope the weather shakes up.",
+        ],
+        "clear":[
+            "Very peaceful. Be grateful.",
+            "Better hope blue ain't turning gray anytime.",
+            "Look at you getting all the good weather.",
+            "Clear as day.",
+            "VERY nice today, ain't it?"
+        ],
+        "cloudy": [
+            "Not what I expected.",
+            "Place your bet on what these clouds do next.",
+            "It's a gray day. But I've got color.",
+            "I wonder what comes after.",
+            "Opposite of clear, simple, right?",
         ],
         "light rain":{
             "Chance":[
@@ -131,7 +145,8 @@ class ConfigurationClass():
             "welcome_scene":0,
             "home_scene":1,
             "warnings_scene":2,
-            "details_scene":3
+            "details_scene":3,
+            "settings_scene":4,
         }
 
         self.default_font_size = 15
@@ -157,6 +172,8 @@ class ConfigurationClass():
         self.geocode_data=None
         self.weather_forecast_data=None
         self.weather_forecast_hourly_data=None
+
+        self.successful_location_txt=None
 
         #todo later
         self.alerts_data=None
@@ -245,4 +262,5 @@ class ConfigurationClass():
         self.weather_forecast_data = WeatherForecastData(weather_forecast_data)
         self.weather_forecast_hourly_data = WeatherForecastHourlyData(weather_forecast_hourly_data)
         self.alerts_data = AlertsData(alerts_data)
+        self.successful_location_txt = suggested_location
         return (0, "")

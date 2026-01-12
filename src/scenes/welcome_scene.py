@@ -33,6 +33,8 @@ class Scene(QWidget):
         self.guide.setFont(self.config.default_font_small)
 
         self.location_text_box.setFixedSize(self.config.welcome_config.user_action_textbox_size)
+        self.location_text_box.setFont(self.config.default_font)
+
         self.confirm_button.setFixedSize(self.config.welcome_config.user_action_button_size)
         self.confirm_button.setFont(self.config.default_font)
 

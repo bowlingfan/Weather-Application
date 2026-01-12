@@ -68,7 +68,7 @@ class WeatherForecastData():
                 current_period.name = day_name.strftime("%A")
                 self.periods.append(current_period)
 
-            day_name = datetime.datetime.now() + datetime.timedelta(days=8)
+            day_name = datetime.datetime.now() + datetime.timedelta(days=7)
             last_day_period = Period()
             last_day_period.read_day_period(periods[0])
             last_day_period.name = day_name.strftime("%A")

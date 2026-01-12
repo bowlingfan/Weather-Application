@@ -12,6 +12,7 @@ from scenes import (
     welcome_scene,
     home_scene,
     warnings_scene,
+    settings_scene,
 )
 from config import ConfigurationClass
 import datetime
@@ -31,7 +32,7 @@ class MainApplication(QWidget):
         super().__init__()
 
         self.config = ConfigurationClass()
-        self.resize(self.config.window_width,self.config.window_width//2)
+        self.setFixedSize(self.config.window_width,self.config.window_width//2)
         self.setWindowTitle("Weather Application")
 
         self.create_widgets()
@@ -49,21 +50,23 @@ class MainApplication(QWidget):
         self.home_button = UIButton("Home", self.config.default_font_small)
         self.warnings_button = UIButton("Warnings", self.config.default_font_small)
         self.details_button = UIButton("Details", self.config.default_font_small)
+        self.settings_button = UIButton("Settings", self.config.default_font_small)
+        self.history_button = UIButton("History", self.config.default_font_small)
 
         self.scenes = QStackedWidget()
         self.welcome_scene = welcome_scene.Scene()
         self.home_scene = home_scene.Scene()
         self.warnings_scene = warnings_scene.Scene()
         self.details_scene = details_scene.Scene()
+        self.settings_scene = settings_scene.Scene()
 
     def design_widgets(self):
         self.menu_button.setMaximumSize(35,35)
         self.menu_button.setMinimumSize(0,35)
         self.menu_button_holder_widget.setMaximumSize(50,50)
         self.menu_widget.setVisible(False)
+        self.menu_button.setVisible(False)
         self.menu_widget.setMaximumWidth(100)
-        #later
-        #self.menu_button.setVisible(True)
 
     def design_layouts(self):
         self.main_layout = QStackedLayout()
@@ -76,6 +79,7 @@ class MainApplication(QWidget):
         self.scenes.addWidget(self.home_scene)
         self.scenes.addWidget(self.warnings_scene)
         self.scenes.addWidget(self.details_scene)
+        self.scenes.addWidget(self.settings_scene)
         self.scenes.setCurrentIndex(self.config.scenes_available["welcome_scene"])
         """
         menu widget/button setup.
@@ -97,6 +101,8 @@ class MainApplication(QWidget):
         menu_widget_layout.addWidget(self.home_button)
         menu_widget_layout.addWidget(self.warnings_button)
         menu_widget_layout.addWidget(self.details_button)
+        menu_widget_layout.addWidget(self.settings_button)
+        menu_widget_layout.addWidget(self.history_button)
         self.menu_widget.setLayout(menu_widget_layout)
 
         """
@@ -114,17 +120,27 @@ class MainApplication(QWidget):
         self.home_button.clicked.connect(self.home_button_clicked)
         self.warnings_button.clicked.connect(self.warnings_button_clicked)
         self.details_button.clicked.connect(self.details_button_clicked)
+        self.settings_button.clicked.connect(self.settings_button_clicked)
+        self.settings_scene.confirm_button.clicked.connect(self.settings_change_location_button_clicked)
+        self.settings_scene.update_button.clicked.connect(self.settings_update_location_button_clicked)
         self.details_scene.increment_day_button.clicked.connect(self.increment_button_clicked)
         self.details_scene.decrement_day_button.clicked.connect(self.decrement_button_clicked)
 
     def menu_button_clicked(self):
         self.menu_widget.setVisible(not self.menu_widget.isVisible())
     def home_button_clicked(self):
+        self.menu_widget.setVisible(False)
         self.request_change_scene("home_scene")
     def warnings_button_clicked(self):
+        self.menu_widget.setVisible(False)
         self.request_change_scene("warnings_scene")
     def details_button_clicked(self):
+        self.menu_widget.setVisible(False)
         self.request_change_scene("details_scene")
+    def settings_button_clicked(self):
+        self.menu_widget.setVisible(False)
+        self.settings_scene.error_label.setVisible(False)
+        self.request_change_scene("settings_scene")
     def increment_button_clicked(self):
         self.config.weather_forecast_data.index_read += 1
         if self.config.weather_forecast_data.index_read >= len(self.config.weather_forecast_data.periods):
@@ -144,24 +160,51 @@ class MainApplication(QWidget):
         if location_text == "":
             self.welcome_scene.guide.setText("Provide a location before pressing confirm.")
             return
-        self.get_api_data_and_setup_ui(location_text)
+        self.get_api_data_and_setup_ui(location_text, self.welcome_scene.guide, True)
 
-    def get_api_data_and_setup_ui(self, location_text):
+    def settings_change_location_button_clicked(self):
+        location_text = self.settings_scene.input_text_box.text()
+        if location_text == "":
+            self.settings_scene.error_label.setVisible(True)
+            self.settings_scene.error_label.setText("Provide a location before pressing change location.")
+            self.settings_scene.error_label.setStyleSheet("QLabel { color: #910700 }")
+            return
+        self.get_api_data_and_setup_ui(location_text, self.settings_scene.error_label)
+
+    def settings_update_location_button_clicked(self):
+        if self.config.successful_location_txt is None:
+            self.settings_scene.error_label.setVisible(True)
+            self.settings_scene.error_label.setText("You must have a location already before updating!")
+            self.settings_scene.error_label.setStyleSheet("QLabel { color: #910700 }")
+            return
+        self.get_api_data_and_setup_ui(self.config.successful_location_txt, self.settings_scene.error_label)
+
+    def get_api_data_and_setup_ui(self, location_text, result_obj, go_to_home_scene=False):
         """
         self.config.get_API_data > (error_code [0], msg [1])
+
+        if return 1: unsuccessful
+        if return 0: successful
         """
         result = self.config.get_API_data(location_text)
+        result_obj.setVisible(True)
         if result[0] != 0:
-            self.welcome_scene.guide.setText(result[1])
+            result_obj.setStyleSheet("QLabel { color: #910700 }")
+            result_obj.setText(result[1])
             return
-        
-        self.request_change_scene("home_scene")
 
         # setup UI
         self.update_UI_geocode_data()
         self.update_UI_weather_forecast_data()
         self.update_UI_weather_forecast_hourly_data()
         self.update_UI_alerts_data()
+        self.menu_button.setVisible(True)
+
+        result_obj.setText("Success!")
+        result_obj.setStyleSheet("QLabel { color: #218E00 }")
+
+        if go_to_home_scene:
+            self.request_change_scene("home_scene")
 
     def update_UI_geocode_data(self):
         self.home_scene.location_header.setText(self.config.geocode_data.get_location())
