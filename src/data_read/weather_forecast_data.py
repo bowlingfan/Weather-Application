@@ -51,7 +51,7 @@ class WeatherForecastData():
         self.read_json(json)
     def read_json(self, json):
         periods = json['properties']['periods']
-        #print(periods)
+        # print(periods)
         # we have the same day next week from API data.
         if periods[0]['name'] == 'Tonight':
             day_name = datetime.datetime.now()

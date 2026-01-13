@@ -1,4 +1,5 @@
 # read weather forecasted hourly JSON and store in more readable format for use
+
 import datetime
 class HourData():
     def __init__(self):

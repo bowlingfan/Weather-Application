@@ -14,6 +14,9 @@ default_font_directory = "resource/Roboto-Light.ttf"
 CLASSES/CONFIGS
 """
 # °
+class HistoryDataConfig():
+    def __init__(self):
+        self.database_name = "weather_history.db"
 class DetailsConfig():
     def __init__(self):
         pass
