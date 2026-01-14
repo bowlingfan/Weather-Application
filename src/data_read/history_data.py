@@ -19,33 +19,37 @@ class HistoryDatabase:
         self.database_usable = False
 
         self.setup_database()
-        self.is_database_open()
+        self.exec_query("setup_table")
 
     def setup_database(self):
         self.database = QSqlDatabase.addDatabase("QSQLITE")
         self.database.setDatabaseName(self.data_config.database_name)
+        self.is_database_open()
     
     def is_database_open(self):
         self.database_usable = self.database.open()
         return self.database_usable
     
-    def exec_query(self, query_command, *bind_values):
+    def exec_query(self, command_key, *bind_values):
         if not self.database_usable:
-            print("WARNING: Database not open. Error occurred from opening."); return
-        if query_command not in sql_queries:
+            print("WARNING: Database not open. Error occurred from opening.\n"); return
+        if command_key not in sql_queries:
             print("WARNING: MUST HAVE VALID SQL QUERY NAME."); return
-        query = QSqlQuery()
-        query.prepare(query_command)
-        for bind_value in bind_values:
-            query.addBindValue(bind_value)
-        query.exec()
+        with open(os.path.join(base_directory, sql_folder_directory, sql_queries[command_key])) as opened_sql_file:
+            query = QSqlQuery()
+            query.prepare(opened_sql_file.read())
+            for bind_value in bind_values:
+                query.addBindValue(bind_value)
+            query.exec()
 
     def get_query_result(self):
-        # todo later
         result=[]
-        query = self.exec_query(self, query_command="")
+        query = self.exec_query("read_data")
         while query.next():
-            pass
+            data={}
+            for index, key in enumerate(self.data_config.database_variables):
+                data.update({key:query.value(index)})
+            result.append(data)
         return result
     
     def display_all_sql_directories(self):

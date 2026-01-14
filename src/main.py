@@ -13,9 +13,9 @@ from scenes import (
     home_scene,
     warnings_scene,
     settings_scene,
+    history_scene,
 )
 from config import ConfigurationClass
-#from data_read import history_data
 import datetime
 #import inspect
 #import os
@@ -60,6 +60,7 @@ class MainApplication(QWidget):
         self.warnings_scene = warnings_scene.Scene()
         self.details_scene = details_scene.Scene()
         self.settings_scene = settings_scene.Scene()
+        self.history_scene = history_scene.Scene()
 
     def design_widgets(self):
         self.menu_button.setMaximumSize(35,35)
@@ -81,7 +82,8 @@ class MainApplication(QWidget):
         self.scenes.addWidget(self.warnings_scene)
         self.scenes.addWidget(self.details_scene)
         self.scenes.addWidget(self.settings_scene)
-        self.scenes.setCurrentIndex(self.config.scenes_available["welcome_scene"])
+        self.scenes.addWidget(self.history_scene)
+        self.scenes.setCurrentIndex(self.config.scenes_available["history_scene"])
         """
         menu widget/button setup.
 

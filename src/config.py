@@ -17,6 +17,7 @@ CLASSES/CONFIGS
 class HistoryDataConfig():
     def __init__(self):
         self.database_name = "weather_history.db"
+        self.database_variables = ["id", "date", "location", "timestamp", "snapshot_temperature"]
 class DetailsConfig():
     def __init__(self):
         pass
@@ -150,6 +151,7 @@ class ConfigurationClass():
             "warnings_scene":2,
             "details_scene":3,
             "settings_scene":4,
+            "history_scene":5,
         }
 
         self.default_font_size = 15
