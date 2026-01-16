@@ -12,12 +12,12 @@ class GeocodeData():
         self.state_abbreviaton = std_data["statename"]
         self.state_name = std_data["addresst"]
     def get_location(self):
-        state_abbreviaton_is_dict = type(self.state_abbreviaton).__name__ == "dict"
-        state_name_is_dict = type(self.state_name).__name__ == "dict"
+        state_abbreviaton_is_not_valid = type(self.state_abbreviaton).__name__ == "dict" or self.state_abbreviaton is None
+        state_name_is_not_valid = type(self.state_name).__name__ == "dict" or self.state_name is None
 
-        if state_abbreviaton_is_dict and state_name_is_dict:
+        if state_abbreviaton_is_not_valid and state_name_is_not_valid:
             return f"{self.city}"
-        elif state_name_is_dict:
+        elif state_name_is_not_valid:
             return f"{self.city}, {self.state_abbreviaton}"
         else:
             return f"{self.city}, {self.state_name}"

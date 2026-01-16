@@ -5,7 +5,6 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QStackedWidget,
     QStackedLayout,
-    QPushButton
 )
 from scenes import (
     details_scene,
@@ -17,7 +16,6 @@ from scenes import (
 )
 import configs.config as main_config
 import configs.ui_config as ui_config
-import importlib
 import datetime
 #import inspect
 #import os
@@ -239,8 +237,6 @@ class MainApplication(QWidget):
         self.update_UI_alerts_data()
         self.menu_button.setVisible(True)
 
-
-
     def update_UI_geocode_data(self):
         self.home_scene.location_header.setText(self.data_files.geocode_data.get_location())
 
@@ -251,7 +247,7 @@ class MainApplication(QWidget):
         day_data = self.data_files.weather_forecast_data.get_period_from_index()
         extra_data = datetime.datetime.now() + datetime.timedelta(days=self.data_files.weather_forecast_data.index_read)
         # %B -> month $d -> day
-        extra_data = main_config.format_month_day(extra_data.strftime("%B %d"))
+        extra_data = main_config.format_month_day_based_on_timestr(extra_data.strftime("%B %d"))
 
         self.details_scene.day_display.setText(f"{day_data.name} - {extra_data}")
         self.details_scene.precipitation_chance_display.setText(f"precip {day_data.precipitation_probability}%")
@@ -281,6 +277,10 @@ class MainApplication(QWidget):
         self.home_scene.wind_display.setText(f"Wind: {current_hour_data.wind_speed} {current_hour_data.wind_direction}")
         self.home_scene.message.setText(main_config.get_home_message_from_forecast(current_hour_data.forecasted_weather))
 
+        # sorry SQL thing
+        self.data_files.history_database.exec_add_snapshot(main_config.get_proper_formatted_current_date(), self.data_files.geocode_data.get_location(), f"{datetime.datetime.now().time().strftime('%I:%M %p')} | UTC {current_timezone_diff_utc}", current_hour_data.temperature)
+        print(self.data_files.history_database.get_database_data())
+        
     def update_UI_alerts_data(self):
         self.warnings_scene.make_alerts(self.data_files.alerts_data, self.data_files.geocode_data)
     
@@ -295,9 +295,5 @@ app = QApplication([])
 ui_config.make_font()
 
 main_window = MainApplication()
-#solves dilemma with text files randomly being open in other places
-#filename = inspect.getframeinfo(inspect.currentframe()).filename
-##path     = os.path.dirname(os.path.abspath(filename))
-#print(path)
 main_window.show()
 app.exec()

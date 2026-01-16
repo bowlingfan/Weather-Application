@@ -19,10 +19,16 @@ class SaveData:
         # read file instead
         if self.does_file_exist():
             with open(txt_file_directory, "r") as txt_file:
+                # Ensure file is not empty
+                if txt_file.read() == "":
+                    return
+                # Restores text file back to original position (at the top)
+                txt_file.seek(0)
+
                 geoposition_line = txt_file.readline()
-                geopositions = [float(strnum.strip('\n').strip('\"')) for strnum in geoposition_line.split(" ")]
-                self.latitude = geopositions[0]
-                self.longitude = geopositions[1]
+                geopositions = [strnum.strip('\n').strip('\"') for strnum in geoposition_line.split(" ")]
+                self.latitude = (-float(geopositions[0][1:])) if geopositions[0][0] == "-" else float(geopositions[0])
+                self.longitude = (-float(geopositions[1][1:])) if geopositions[1][0] == "-" else float(geopositions[1])
 
                 city_line = txt_file.readline()
                 city_line = city_line[city_line.find('\"'):].strip('\n').strip('\"')
@@ -30,11 +36,11 @@ class SaveData:
 
                 state_name_line = txt_file.readline()
                 state_name_line = state_name_line[state_name_line.find('\"'):].strip('\n').strip('\"')
-                self.state_name = state_name_line if state_name_line != "{}" and state_name_line != "None" else None
+                self.state_name = state_name_line if type(state_name_line).__name__ != "dict" and state_name_line != "None" else None
 
                 state_abbreviation_line = txt_file.readline()
                 state_abbreviation_line = state_abbreviation_line[state_abbreviation_line.find('\"'):].strip('\n').strip('\"')
-                self.state_abbreviaton = state_abbreviation_line if state_abbreviation_line != "{}" and state_abbreviation_line != "None" else None
+                self.state_abbreviaton = state_abbreviation_line if type(state_name_line).__name__ != "dict" and state_abbreviation_line != "None" else None
         # make a new file
         else: 
             with open(txt_file_directory, "w") as txt_file:

@@ -2,12 +2,9 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QStackedLayout, 
     QWidget, 
-    QLabel, 
-    QPushButton, 
     QVBoxLayout, 
     QHBoxLayout, 
 )
-import configs.config as main_config
 import configs.ui_config as ui_config
 
 class DetailsLabel(ui_config.UI_TextLabel):

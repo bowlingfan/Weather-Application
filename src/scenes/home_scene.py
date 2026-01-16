@@ -1,11 +1,9 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QWidget, 
-    QLabel, 
     QVBoxLayout, 
     QHBoxLayout, 
 )
-import configs.config as main_config
 import configs.ui_config as ui_config
 
 class Scene(QWidget):

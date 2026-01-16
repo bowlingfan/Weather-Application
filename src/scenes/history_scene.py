@@ -1,16 +1,10 @@
-from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import (
     QWidget, 
-    QLabel, 
     QVBoxLayout, 
     QHBoxLayout, 
-    QScrollArea,
-    QPushButton
 )
-#from PyQt6.QtGui import QSiz
 import configs.config as main_config
 import configs.ui_config as ui_config
-from data_read import history_data
 
 class SnapshotWidget(QWidget):
     def __init__(self, snapshotData):
@@ -44,8 +38,6 @@ class SnapshotWidget(QWidget):
 class Scene(ui_config.Base_Scene_ScrollArea):
     def __init__(self):
         super().__init__()
-
-        self.historyDatabase = history_data.HistoryDatabase()
         
         self.create_widgets()
         self.design_widgets()

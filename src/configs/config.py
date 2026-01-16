@@ -1,11 +1,13 @@
 
 # todo write an error case for error when no internet..
+import datetime
 import requests, random
 from data_read.geocode_data import GeocodeData
 from data_read.weather_forecast_data import WeatherForecastData
 from data_read.weather_forecast_hourly_data import WeatherForecastHourlyData
 from data_read.alerts_data import AlertsData
 from data_read.save_data import SaveData
+from data_read.history_data import HistoryDatabase
 import configs.msg_config as msg_config
 
 """
@@ -32,11 +34,6 @@ base_url_apis = {
     "alerts": "https://api.weather.gov/alerts/active/zone/",
 }
 
-geocode_data = None
-weather_forecast_data = None
-weather_forecast_hourly_data = None
-alerts_data = None
-
 geographical_position_decimal_places = 4
 weather_alerts_throttled_status_code = 403
 
@@ -55,7 +52,7 @@ config = {
 def number_from_percentage(main_data, percent):
     return int(main_data/100)*percent
 
-def format_month_day(timestr):
+def format_month_day_based_on_timestr(timestr):
     tens_place = int(timestr[-2])
     ones_place = int(timestr[-1])
 
@@ -69,6 +66,12 @@ def format_month_day(timestr):
         timestr += "th"
 
     return timestr
+
+def get_proper_formatted_current_date():
+    current_date = datetime.datetime.now().date()
+    month_day_str = format_month_day_based_on_timestr(current_date.strftime("%B %d"))
+    year = current_date.strftime("%Y")
+    return month_day_str + ", " + year
 
 def convert_hour_with_timezone(input_hour, input_timezone, new_timezone):
     timezone_diff = new_timezone-input_timezone
@@ -104,9 +107,6 @@ def get_home_message_from_forecast(forecast):
     else:
         return random.choice(msgs)
 
-def get_geocode_data():
-    return geocode_data
-
 class DataFiles:
     def __init__(self):
         self.geocode_data : GeocodeData = None
@@ -115,6 +115,7 @@ class DataFiles:
         self.successful_location_txt : str = None # todo save data
         self.alerts_data : AlertsData = None
         self.save_data : SaveData = SaveData()
+        self.history_database : HistoryDatabase = HistoryDatabase()
 
     def update_geocode_with_save(self):
         self.geocode_data = GeocodeData()

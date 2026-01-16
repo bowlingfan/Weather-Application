@@ -1,13 +1,10 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QWidget, 
-    QLabel, 
     QVBoxLayout, 
-    QScrollArea
 )
 import configs.config as main_config
 import configs.ui_config as ui_config
-import random
 
 severity_to_color = {
     1:"QLabel {background-color: #A5000D; color: #FFFFFF}",
