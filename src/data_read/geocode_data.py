@@ -1,8 +1,12 @@
 # read geocode JSON and store in more readable format for use
 
 class GeocodeData():
-    def __init__(self, json):
-        self.read_std(json['standard'])
+    def __init__(self, json=None):
+        self.city = None
+        self.state_name = None
+        self.state_abbreviaton = None
+        if json is not None:
+            self.read_std(json['standard'])
     def read_std(self, std_data):
         self.city = std_data["city"]
         self.state_abbreviaton = std_data["statename"]

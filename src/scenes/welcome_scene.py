@@ -7,36 +7,34 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLineEdit 
 )
-from config import ConfigurationClass
+import configs.config as main_config
+import configs.ui_config as ui_config
 
 class Scene(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.config = ConfigurationClass()
         self.create_widgets()
         self.design_widgets()
         self.design_layouts()
         #self.connect_events()
 
     def create_widgets(self):
-        self.header = QLabel("Hi!")
-        self.guide = QLabel("Type a location in the United States and press confirm to get started.")
+        self.header = ui_config.UI_TextLabel(ui_config.UI_Welcome_Scene_Config["header"]["default_txt"])
+        self.guide = ui_config.UI_TextLabel(ui_config.UI_Welcome_Scene_Config["guide"]["default_txt"])
         self.location_text_box = QLineEdit()
-        self.confirm_button = QPushButton("CONFIRM")
+        self.confirm_button = ui_config.UI_Button(ui_config.UI_Welcome_Scene_Config["confirm_button"]["default_txt"])
 
     def design_widgets(self):
         self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.header.setFont(self.config.default_font)
 
         self.guide.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.guide.setFont(self.config.default_font_small)
+        self.guide.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
 
-        self.location_text_box.setFixedSize(self.config.welcome_config.user_action_textbox_size)
-        self.location_text_box.setFont(self.config.default_font)
+        self.location_text_box.setFixedSize(ui_config.UI_Welcome_Scene_Config["location_text_box"]["fixed_size"])
+        self.location_text_box.setFont(ui_config.UI_Config["default"]["font"]["QFont_normal"])
 
-        self.confirm_button.setFixedSize(self.config.welcome_config.user_action_button_size)
-        self.confirm_button.setFont(self.config.default_font)
+        self.confirm_button.setFixedSize(ui_config.UI_Welcome_Scene_Config["confirm_button"]["fixed_size"])
 
     def design_layouts(self):
         self.main_layout = QVBoxLayout()

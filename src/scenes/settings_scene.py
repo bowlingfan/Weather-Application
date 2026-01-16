@@ -7,13 +7,13 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout
 )
-from config import ConfigurationClass
+import configs.config as main_config
+import configs.ui_config as ui_config
 
 class Scene(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.config = ConfigurationClass()
         self.create_widgets()
         self.design_widgets()
         self.design_layouts()
@@ -21,17 +21,18 @@ class Scene(QWidget):
     
     def create_widgets(self):
         self.input_text_box = QLineEdit()
-        self.confirm_button = QPushButton("Change Location")
-        self.update_button = QPushButton("Update Weather Data")
-        self.warning_label = QLabel("Updates Weather Data given current location; WILL freeze program.")
-        self.error_label = QLabel("Test Error")
+        self.confirm_button = QPushButton(ui_config.UI_Settings_Scene_Config["confirm_button"]["default_txt"])
+        self.update_button = QPushButton(ui_config.UI_Settings_Scene_Config["update_button"]["default_txt"])
+        self.warning_label = QLabel(ui_config.UI_Settings_Scene_Config["warning_label"]["default_txt"])
+        self.error_label = QLabel(ui_config.UI_Settings_Scene_Config["error_label"]["default_txt"])
 
     def design_widgets(self):
-        self.input_text_box.setFont(self.config.default_font)
-        self.confirm_button.setFont(self.config.default_font)
-        self.update_button.setFont(self.config.default_font)
-        self.warning_label.setFont(self.config.default_font_small)
-        self.error_label.setFont(self.config.default_font_small)
+        self.input_text_box.setFont(ui_config.UI_Config["default"]["font"]["QFont_normal"])
+        self.confirm_button.setFont(ui_config.UI_Config["default"]["font"]["QFont_normal"])
+        self.update_button.setFont(ui_config.UI_Config["default"]["font"]["QFont_normal"])
+        self.warning_label.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        self.error_label.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+
         self.error_label.setVisible(False)
         self.error_label.setStyleSheet("QLabel { color: #910700 }")
 

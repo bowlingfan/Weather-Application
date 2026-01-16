@@ -5,44 +5,45 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QHBoxLayout, 
 )
-from config import ConfigurationClass
-
-class TextLabel(QLabel):
-    def __init__(self, text, font):
-        """
-        font -> QFont Type
-        """
-        super().__init__(text=text)
-        self.setFont(font)
-        self.setMaximumHeight(15)
+import configs.config as main_config
+import configs.ui_config as ui_config
 
 class Scene(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.config = ConfigurationClass()
         self.create_widgets()
         self.design_widgets()
         self.design_layouts()
         #self.connect_events()
 
     def create_widgets(self):
-        self.location_header = TextLabel("Location Test", self.config.default_font)
-        self.temperature_display = TextLabel("75°",self.config.make_font(self.config.home_config.temperature_display_font_size))
+        self.location_header = ui_config.UI_TextLabel(ui_config.UI_Home_Scene_Config["location_header"]["default_txt"])
+        self.temperature_display = ui_config.UI_TextLabel(ui_config.UI_Home_Scene_Config["temperature_display"]["default_txt"])
         # detailed
-        self.forecast_display = TextLabel("", self.config.default_font_small)
-        self.preciptation_display = TextLabel("Preciptation: ", self.config.default_font_small)
-        self.wind_display = TextLabel("Wind: 6 N", self.config.default_font_small)
-        self.message = TextLabel("Aren't you excited? It's sunny.", self.config.default_font_small)
+        self.forecast_display = ui_config.UI_TextLabel(ui_config.UI_Home_Scene_Config["forecast_display"]["default_txt"])
+        self.preciptation_display = ui_config.UI_TextLabel(ui_config.UI_Home_Scene_Config["preciptation_display"]["default_txt"])
+        self.wind_display = ui_config.UI_TextLabel(ui_config.UI_Home_Scene_Config["wind_display"]["default_txt"])
+        self.message = ui_config.UI_TextLabel(ui_config.UI_Home_Scene_Config["message"]["default_txt"])
 
     def design_widgets(self):
         self.location_header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.location_header.setMinimumHeight(45)
-        self.location_header.setFont(self.config.default_font)
+        self.location_header.setMinimumHeight(ui_config.UI_Home_Scene_Config["location_header"]["minimum_height"])
 
         self.temperature_display.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignVCenter)
-        self.temperature_display.setMaximumHeight(self.config.window_width//2)
+        self.temperature_display.setMaximumHeight(ui_config.UI_Config["window"]["height"])
+        new_font = self.temperature_display.font()
+        new_font.setPointSize(ui_config.UI_Home_Scene_Config["temperature_display"]["font_size"])
+        self.temperature_display.setFont(new_font)
 
+        self.forecast_display.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        self.forecast_display.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.preciptation_display.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        self.preciptation_display.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.wind_display.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        self.wind_display.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.message.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        
         self.message.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
     def design_layouts(self):

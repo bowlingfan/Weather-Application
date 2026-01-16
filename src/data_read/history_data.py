@@ -1,5 +1,5 @@
 from PyQt6.QtSql import QSqlDatabase, QSqlQuery
-from config import HistoryDataConfig
+import configs.config as main_config
 import os
 
 """
@@ -14,7 +14,6 @@ sql_queries = {}
 
 class HistoryDatabase:
     def __init__(self):
-        self.data_config = HistoryDataConfig()
         self.database = None
         self.database_usable = False
 
@@ -23,7 +22,7 @@ class HistoryDatabase:
 
     def setup_database(self):
         self.database = QSqlDatabase.addDatabase("QSQLITE")
-        self.database.setDatabaseName(self.data_config.database_name)
+        self.database.setDatabaseName(main_config.config["database"]["name"])
         self.is_database_open()
     
     def is_database_open(self):

@@ -8,26 +8,23 @@ from PyQt6.QtWidgets import (
     QPushButton
 )
 #from PyQt6.QtGui import QSiz
-from config import ConfigurationClass
+import configs.config as main_config
+import configs.ui_config as ui_config
 from data_read import history_data
 
-class TextLabel(QLabel):
-    def __init__(self, text, font):
-        """
-        font -> QFont Type
-        """
-        super().__init__(text=text)
-        self.setFont(font)
-
 class SnapshotWidget(QWidget):
-    def __init__(self, config : ConfigurationClass, snapshotData):
+    def __init__(self, snapshotData):
         super().__init__()
 
-        self.location_label = TextLabel("location", config.default_font)
-        self.date_label = TextLabel("date", config.default_font_small)
-        self.timestamp_label = TextLabel("timestamp", config.default_font_small)
-        self.temperature_label = TextLabel("105°", config.make_font(30))
-        self.delete_button = QPushButton("DELETE")
+        self.location_label = ui_config.UI_TextLabel(ui_config.UI_History_Scene_Config["location_label"]["default_txt"])
+        self.date_label = ui_config.UI_TextLabel(ui_config.UI_History_Scene_Config["date_label"]["default_txt"])
+        self.timestamp_label = ui_config.UI_TextLabel(ui_config.UI_History_Scene_Config["timestamp_label"]["default_txt"])
+        self.temperature_label = ui_config.UI_TextLabel(ui_config.UI_History_Scene_Config["temperature_label"]["default_txt"])
+        self.delete_button = ui_config.UI_Button(ui_config.UI_History_Scene_Config["delete_button"]["default_txt"])
+
+        self.date_label.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        self.timestamp_label.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        self.temperature_label.font().setPointSize(ui_config.UI_History_Scene_Config["temperature_label"]["font_size"])
 
         self.main_layout = QHBoxLayout()
         self.details_column = QVBoxLayout()
@@ -44,11 +41,10 @@ class SnapshotWidget(QWidget):
         #self.setMaximumSize(QSize(207, 153))
         self.setLayout(self.main_layout)
 
-class Scene(QWidget):
+class Scene(ui_config.Base_Scene_ScrollArea):
     def __init__(self):
         super().__init__()
 
-        self.config = ConfigurationClass()
         self.historyDatabase = history_data.HistoryDatabase()
         
         self.create_widgets()
@@ -56,48 +52,20 @@ class Scene(QWidget):
         self.design_layouts()
         self.connect_events()
 
-        print(self.scrolling_widget.size())
 
-    def create_widgets(self):
-        self.header_snapshot_amount = TextLabel("0 / 30 snapshots.", self.config.default_font)
-        #self.no_snapshots_display = TextLabel(random.choice(self.config.warnings_config.no_weather_warning_messages), self.config.default_font)
-        self.scrolling_widget = QWidget()
-        self.scrolling_area_snapshots = QScrollArea()
-        
-    def design_widgets(self):
-        self.header_snapshot_amount.setMaximumHeight(35)
-        self.header_snapshot_amount.setMinimumHeight(35)
-        self.header_snapshot_amount.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        #self.no_snapshots_display.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        #self.no_snapshots_display.setVisible(False)
-    
-    def design_layouts(self):
-        self.main_layout = QVBoxLayout()
-        self.main_layout.setContentsMargins(15,15,15,15)
 
-        self.scrolling_area_layout = QVBoxLayout()
-        self.scrolling_area_layout.setContentsMargins(0,0,0,0)
-        self.scrolling_area_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        #print(self.scrolling_widget.size())
 
-        self.scrolling_widget.setLayout(self.scrolling_area_layout)
-
-        self.scrolling_area_snapshots.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.scrolling_area_snapshots.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.scrolling_area_snapshots.setWidgetResizable(True)
-        self.scrolling_area_snapshots.setWidget(self.scrolling_widget)
-
-        self.main_layout.addWidget(self.header_snapshot_amount)
-        #self.main_layout.addWidget(self.no_weather_warnings)
-        self.main_layout.addWidget(self.scrolling_area_snapshots)
-
-        self.setLayout(self.main_layout)
-
-    def connect_events(self):
+    def add_to_scroll_are(self, QUIObject):
+        # OVERRIDE
+        self.scrolling_area_layout.addLayout(QUIObject)
+"""
         for i in range(10):
             widgets=QWidget()
             holder=QHBoxLayout()
-            holder.addWidget(SnapshotWidget(self.config, []))
-            holder.addWidget(SnapshotWidget(self.config, []))
-            holder.addWidget(SnapshotWidget(self.config, []))
+            holder.addWidget(SnapshotWidget([]))
+            holder.addWidget(SnapshotWidget([]))
+            holder.addWidget(SnapshotWidget([]))
             widgets.setLayout(holder)
             self.scrolling_area_layout.addWidget(widgets)
+"""

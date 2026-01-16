@@ -7,60 +7,53 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QHBoxLayout, 
 )
-from config import ConfigurationClass
+import configs.config as main_config
+import configs.ui_config as ui_config
 
-class UIButton(QPushButton):
-    def __init__(self, text, font):
-        """
-        font -> QFont Type
-        """
-        super().__init__(text=text)
-        self.setFont(font)
-
-class TextLabel(QLabel):
-    def __init__(self, text, font):
-        """
-        font -> QFont Type
-        """
-        super().__init__(text=text)
-        self.setFont(font)
-        self.setMaximumHeight(15)
-        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+class DetailsLabel(ui_config.UI_TextLabel):
+    def __init__(self, text):
+        super().__init__(text)
+        self.setMaximumHeight(ui_config.UI_Details_Scene_Config["DetailsLabel"]["maximum_height"])
+        self.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
 
 class Scene(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.config = ConfigurationClass()
         self.create_widgets()
         self.design_widgets()
         self.design_layouts()
         self.connect_events()
 
     def create_widgets(self):
-        self.decrement_day_button = UIButton("<",self.config.default_font)
-        self.increment_day_button = UIButton(">",self.config.default_font)
-        self.day_display = TextLabel("Sunday - January 11th",self.config.default_font)
+        self.decrement_day_button = ui_config.UI_Button(ui_config.UI_Details_Scene_Config["decrement_day_button"]["default_txt"])
+        self.increment_day_button = ui_config.UI_Button(ui_config.UI_Details_Scene_Config["increment_day_button"]["default_txt"])
+        self.day_display = ui_config.UI_TextLabel(ui_config.UI_Details_Scene_Config["day_display"]["default_txt"])
 
-        self.temperature_high_display = TextLabel("high temperature 10°",self.config.default_font_small)
-        self.temperature_low_display = TextLabel("low temperature 10°",self.config.default_font_small)
-        self.precipitation_chance_display = TextLabel("precip 75%",self.config.default_font_small)
-        self.wind_display = TextLabel("10 mph SW",self.config.default_font_small)
-        self.forecasted_weather_display = TextLabel("Partly Sunny",self.config.default_font)
+        self.temperature_high_display = DetailsLabel(ui_config.UI_Details_Scene_Config["temperature_high_display"]["default_txt"])
+        self.temperature_low_display = DetailsLabel(ui_config.UI_Details_Scene_Config["temperature_low_display"]["default_txt"])
+        self.precipitation_chance_display = DetailsLabel(ui_config.UI_Details_Scene_Config["precipitation_chance_display"]["default_txt"])
+        self.wind_display = DetailsLabel(ui_config.UI_Details_Scene_Config["wind_display"]["default_txt"])
+        self.forecasted_weather_display = ui_config.UI_TextLabel(ui_config.UI_Details_Scene_Config["forecasted_weather_display"]["default_txt"])
 
         self.precipitation_bar = QWidget()
 
     def design_widgets(self):
-        self.precipitation_bar.setFixedHeight(200)
+        self.temperature_high_display.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        self.temperature_low_display.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        self.precipitation_chance_display.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+        self.wind_display.setFont(ui_config.UI_Config["default"]["font"]["QFont_small"])
+
+        self.precipitation_bar.setFixedHeight(ui_config.UI_Details_Scene_Config["precipitation_bar"]["fixed_height"])
         self.precipitation_bar.setStyleSheet("""
             QWidget {
                 background-color: #0083FF
             }
         """)
-        self.decrement_day_button.setFixedSize(35,35)
-        self.increment_day_button.setFixedSize(35,35)
-        self.day_display.setMaximumHeight(35)
-        self.forecasted_weather_display.setMaximumHeight(35)
+        self.decrement_day_button.setFixedSize(ui_config.UI_Details_Scene_Config["decrement_day_button"]["fixed_size"])
+        self.increment_day_button.setFixedSize(ui_config.UI_Details_Scene_Config["increment_day_button"]["fixed_size"])
+        self.day_display.setMaximumHeight(ui_config.UI_Details_Scene_Config["day_display"]["maximum_height"])
+        self.forecasted_weather_display.setMaximumHeight(ui_config.UI_Details_Scene_Config["forecasted_weather_display"]["maximum_height"])
 
     def design_layouts(self):
         self.main_layout = QStackedLayout()
@@ -82,9 +75,9 @@ class Scene(QWidget):
         self.detailed_info_layout = QVBoxLayout()
 
         self.day_display_row.addWidget(self.decrement_day_button, 0, Qt.AlignmentFlag.AlignRight)
-        self.day_display_row.addSpacing(10)
+        self.day_display_row.addSpacing(ui_config.UI_Non_Scene_Config["day_display_row"]["spacing"])
         self.day_display_row.addWidget(self.day_display)
-        self.day_display_row.addSpacing(10)
+        self.day_display_row.addSpacing(ui_config.UI_Non_Scene_Config["day_display_row"]["spacing"])
         self.day_display_row.addWidget(self.increment_day_button, 0, Qt.AlignmentFlag.AlignLeft)
 
         self.detailed_info_layout.addWidget(self.temperature_high_display)
