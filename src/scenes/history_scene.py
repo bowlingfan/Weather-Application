@@ -35,6 +35,7 @@ class SnapshotWidget(QWidget):
         self.main_layout.addLayout(self.details_column)
         self.main_layout.addWidget(self.temperature_label)
         self.setFixedWidth(200)
+        self.setMaximumHeight(140)
         self.setLayout(self.main_layout)
 
 class Scene(ui_config.Base_Scene_ScrollArea):
@@ -48,6 +49,7 @@ class Scene(ui_config.Base_Scene_ScrollArea):
 
     def add_to_scroll_area(self, QUIObject):
         self.scrolling_area_layout.addWidget(QUIObject)
+        self.list_of_widgets.append(QUIObject)
 
     def make_snapshots(self, database_data, records_amt):
         self.clear_scrolling_area_layout()
@@ -55,8 +57,10 @@ class Scene(ui_config.Base_Scene_ScrollArea):
         widget_holder = QWidget()
         layout_holder = QHBoxLayout()
         layout_holder.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
         current_col_index = 0
-        for record in database_data:
+        # sort in ascending order of timestamp added (really can just put ID)
+        for record in sorted(database_data, key=lambda dict_data: dict_data["id"], reverse=True):
             current_col_index += 1
             layout_holder.addWidget(SnapshotWidget(record))
             if current_col_index == 3:
@@ -66,7 +70,9 @@ class Scene(ui_config.Base_Scene_ScrollArea):
                 widget_holder = QWidget()
                 layout_holder = QHBoxLayout()
                 layout_holder.setAlignment(Qt.AlignmentFlag.AlignLeft)
+                
         widget_holder.setLayout(layout_holder)
         self.add_to_scroll_area(widget_holder)
-
+        
+        print(self.list_of_widgets)
         self.header.setText(f'{records_amt} / 30 snapshots.')

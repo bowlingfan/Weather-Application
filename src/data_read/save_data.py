@@ -36,11 +36,11 @@ class SaveData:
 
                 state_name_line = txt_file.readline()
                 state_name_line = state_name_line[state_name_line.find('\"'):].strip('\n').strip('\"')
-                self.state_name = state_name_line if type(state_name_line).__name__ != "dict" and state_name_line != "None" else None
+                self.state_name = state_name_line if type(state_name_line).__name__ != "dict" and state_name_line != "None" and state_name_line != "{}" else None
 
                 state_abbreviation_line = txt_file.readline()
                 state_abbreviation_line = state_abbreviation_line[state_abbreviation_line.find('\"'):].strip('\n').strip('\"')
-                self.state_abbreviaton = state_abbreviation_line if type(state_name_line).__name__ != "dict" and state_abbreviation_line != "None" else None
+                self.state_abbreviaton = state_abbreviation_line if type(state_name_line).__name__ != "dict" and state_abbreviation_line != "None" and state_abbreviation_line != "{}" else None
         # make a new file
         else: 
             with open(txt_file_directory, "w") as txt_file:

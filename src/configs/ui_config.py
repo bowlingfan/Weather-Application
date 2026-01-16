@@ -259,6 +259,8 @@ class UI_TextLabel(QLabel):
 class Base_Scene_ScrollArea(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.list_of_widgets = []
     
     def create_widgets(self):
         self.header = UI_TextLabel(UI_Base_Scene_ScrollArea_Config["header_default_txt"])#, .default_font)
@@ -278,7 +280,7 @@ class Base_Scene_ScrollArea(QWidget):
 
         self.scrolling_area_layout = QVBoxLayout()
         self.scrolling_area_layout.setContentsMargins(0,0,0,0)
-        #self.scrolling_area_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.scrolling_area_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self.scrolling_widget.setLayout(self.scrolling_area_layout)
 
@@ -294,8 +296,9 @@ class Base_Scene_ScrollArea(QWidget):
         self.setLayout(self.main_layout)
 
     def clear_scrolling_area_layout(self):
-        for x in range(len(self.scrolling_area_layout.children())):
-            self.scrolling_area_layout.takeAt(0)
+        for widget in self.list_of_widgets:
+            widget.deleteLater()
+        self.list_of_widgets.clear()
 
     def update_amount_to_scene(self, amt, strtype):
         if amt <= 0:

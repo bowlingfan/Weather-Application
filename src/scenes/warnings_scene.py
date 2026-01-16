@@ -47,6 +47,7 @@ class Scene(ui_config.Base_Scene_ScrollArea):
 
     def add_to_scroll_area(self, QUIObject):
         self.scrolling_area_layout.addWidget(QUIObject)
+        self.list_of_widgets.append(QUIObject)
 
     def make_alerts(self, alert_data, geocode_data):
         # clear all items
