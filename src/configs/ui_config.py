@@ -214,7 +214,7 @@ UI_History_Scene_Config = {
 
     "temperature_label": {
         "default_txt": "temperature",
-        "font_size": 30,
+        "font_size": 45,
     },
 
     "header_snapshot_amount": {
@@ -278,7 +278,7 @@ class Base_Scene_ScrollArea(QWidget):
 
         self.scrolling_area_layout = QVBoxLayout()
         self.scrolling_area_layout.setContentsMargins(0,0,0,0)
-        self.scrolling_area_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        #self.scrolling_area_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self.scrolling_widget.setLayout(self.scrolling_area_layout)
 
@@ -292,6 +292,10 @@ class Base_Scene_ScrollArea(QWidget):
         self.main_layout.addWidget(self.scrolling_area)
 
         self.setLayout(self.main_layout)
+
+    def clear_scrolling_area_layout(self):
+        for x in range(len(self.scrolling_area_layout.children())):
+            self.scrolling_area_layout.takeAt(0)
 
     def update_amount_to_scene(self, amt, strtype):
         if amt <= 0:

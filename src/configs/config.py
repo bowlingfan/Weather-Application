@@ -34,6 +34,8 @@ base_url_apis = {
     "alerts": "https://api.weather.gov/alerts/active/zone/",
 }
 
+history_snapshot_limit = 30
+
 geographical_position_decimal_places = 4
 weather_alerts_throttled_status_code = 403
 
@@ -45,7 +47,7 @@ config = {
 
     "database": {
         "name": "weather_history.db",
-        "variables": ["id", "date", "location", "timestamp", "snapshot_temperature"],
+        "variables": ["id", "date", "location", "timestamp", "temperature"],
     },
 }
 

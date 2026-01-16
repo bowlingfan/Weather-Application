@@ -120,6 +120,7 @@ class MainApplication(QWidget):
         self.warnings_button.clicked.connect(self.warnings_button_clicked)
         self.details_button.clicked.connect(self.details_button_clicked)
         self.settings_button.clicked.connect(self.settings_button_clicked)
+        self.history_button.clicked.connect(self.history_button_clicked)
         self.settings_scene.confirm_button.clicked.connect(self.settings_change_location_button_clicked)
         self.settings_scene.update_button.clicked.connect(self.settings_update_location_button_clicked)
         self.details_scene.increment_day_button.clicked.connect(self.increment_button_clicked)
@@ -140,6 +141,9 @@ class MainApplication(QWidget):
         self.menu_widget.setVisible(False)
         self.settings_scene.error_label.setVisible(False)
         self.request_change_scene("settings_scene")
+    def history_button_clicked(self):
+        self.menu_widget.setVisible(False)
+        self.request_change_scene("history_scene")
     def increment_button_clicked(self):
         self.data_files.weather_forecast_data.index_read += 1
         if self.data_files.weather_forecast_data.index_read >= len(self.data_files.weather_forecast_data.periods):
@@ -278,9 +282,8 @@ class MainApplication(QWidget):
         self.home_scene.message.setText(main_config.get_home_message_from_forecast(current_hour_data.forecasted_weather))
 
         # sorry SQL thing
-        self.data_files.history_database.exec_add_snapshot(main_config.get_proper_formatted_current_date(), self.data_files.geocode_data.get_location(), f"{datetime.datetime.now().time().strftime('%I:%M %p')} | UTC {current_timezone_diff_utc}", current_hour_data.temperature)
-        print(self.data_files.history_database.get_database_data())
-        
+        self.data_files.history_database.exec_add_snapshot(main_config.get_proper_formatted_current_date(), self.data_files.geocode_data.city, f"{datetime.datetime.now().time().strftime('%I:%M %p')} | UTC {current_timezone_diff_utc}", current_hour_data.temperature)
+        self.history_scene.make_snapshots(self.data_files.history_database.get_database_data(), self.data_files.history_database.database_record_size)
     def update_UI_alerts_data(self):
         self.warnings_scene.make_alerts(self.data_files.alerts_data, self.data_files.geocode_data)
     

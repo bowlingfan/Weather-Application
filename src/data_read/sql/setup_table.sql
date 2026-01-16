@@ -3,5 +3,5 @@ CREATE TABLE IF NOT EXISTS weatherHistory (
     date TEXT,
     location TEXT,
     timestamp TEXT,
-    snapshot_temperature REAL
+    snapshot_temperature SMALLINT
 )

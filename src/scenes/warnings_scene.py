@@ -36,8 +36,6 @@ class WarningWidget(QWidget):
 
         self.setLayout(self.main_layout)
 
-# todo write a class for warnings & history
-
 class Scene(ui_config.Base_Scene_ScrollArea):
     def __init__(self):
         super().__init__()
@@ -52,8 +50,8 @@ class Scene(ui_config.Base_Scene_ScrollArea):
 
     def make_alerts(self, alert_data, geocode_data):
         # clear all items
-        for x in range(len(self.scrolling_area_layout.children())):
-            self.scrolling_area_layout.takeAt(0)
+        self.clear_scrolling_area_layout()
+
         alerts = alert_data.alerts
         alerts_amt = len(alerts)
         if alerts_amt == 0:
@@ -64,5 +62,5 @@ class Scene(ui_config.Base_Scene_ScrollArea):
             self.scrolling_area.setVisible(True)
             self.scrolling_widget_empty_indicator.setVisible(False)
             for alert in alerts:
-                self.scrolling_area_layout.addWidget(WarningWidget(alert))
+                self.add_to_scroll_area(WarningWidget(alert))
         self.header.setText(f"{alerts_amt} weather alerts in {geocode_data.get_location()}.")

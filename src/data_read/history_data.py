@@ -53,7 +53,7 @@ class HistoryDatabase:
     
     # helper function
     def exec_add_snapshot(self, *bind_values):
-        if self.database_record_size > 3:
+        if self.database_record_size > main_config.history_snapshot_limit-1:
             self.database_record_size -= 1
             self.exec_query("remove_snapshot", self.lowest_id_existent)
 
@@ -69,7 +69,9 @@ class HistoryDatabase:
             amt += 1
             for index, key in enumerate(main_config.config["database"]["variables"]):
                 queried_value_from_index = query.value(index)
-                if amt == 1 and key == "id":
+                if (amt == 1 and key == "id"):
+                    self.lowest_id_existent = queried_value_from_index
+                elif key == "id" and self.lowest_id_existent > queried_value_from_index:
                     self.lowest_id_existent = queried_value_from_index
                 data.update({key:queried_value_from_index})
             result.append(data)
