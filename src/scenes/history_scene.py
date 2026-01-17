@@ -11,6 +11,8 @@ class SnapshotWidget(QWidget):
     def __init__(self, snapshotData):
         super().__init__()
 
+        self.primary_key_id = snapshotData["id"]
+
         self.location_label = ui_config.UI_TextLabel(snapshotData["location"])
         self.date_label = ui_config.UI_TextLabel(snapshotData["date"])
         self.timestamp_label = ui_config.UI_TextLabel(snapshotData["timestamp"])
@@ -41,6 +43,8 @@ class SnapshotWidget(QWidget):
 class Scene(ui_config.Base_Scene_ScrollArea):
     def __init__(self):
         super().__init__()
+
+        self.history_database = None
         
         self.create_widgets()
         self.design_widgets()
@@ -49,7 +53,7 @@ class Scene(ui_config.Base_Scene_ScrollArea):
 
     def add_to_scroll_area(self, QUIObject):
         self.scrolling_area_layout.addWidget(QUIObject)
-        self.list_of_widgets.append(QUIObject)
+        self.list_of_widgets_displayed.append(QUIObject)
 
     def make_snapshots(self, database_data, records_amt):
         self.clear_scrolling_area_layout()
@@ -62,17 +66,27 @@ class Scene(ui_config.Base_Scene_ScrollArea):
         # sort in ascending order of timestamp added (really can just put ID)
         for record in sorted(database_data, key=lambda dict_data: dict_data["id"], reverse=True):
             current_col_index += 1
-            layout_holder.addWidget(SnapshotWidget(record))
+
+            snapshot_widget = SnapshotWidget(record)
+            snapshot_widget.delete_button.clicked.connect(self.delete_button_clicked)
+            layout_holder.addWidget(snapshot_widget)
+
+            # We can only display 3 snapshots per row, so check:
             if current_col_index == 3:
                 current_col_index = 0
+                # Make a new row
                 widget_holder.setLayout(layout_holder)
                 self.add_to_scroll_area(widget_holder)
                 widget_holder = QWidget()
                 layout_holder = QHBoxLayout()
                 layout_holder.setAlignment(Qt.AlignmentFlag.AlignLeft)
-                
+
         widget_holder.setLayout(layout_holder)
         self.add_to_scroll_area(widget_holder)
-        
-        print(self.list_of_widgets)
+
         self.header.setText(f'{records_amt} / 30 snapshots.')
+
+    def delete_button_clicked(self):
+        id_to_delete = self.sender().parent().primary_key_id
+        self.history_database.exec_query("remove_snapshot", id_to_delete)
+        self.make_snapshots(self.history_database.get_database_data(), self.history_database.database_record_size)

@@ -59,6 +59,9 @@ class MainApplication(QWidget):
         self.settings_scene = settings_scene.Scene()
         self.history_scene = history_scene.Scene()
 
+        # Cross Reference to History_database for History_scene to allow for deleting snapshots.
+        self.history_scene.history_database = self.data_files.history_database
+
     def design_widgets(self):
         self.menu_button.setMaximumSize(ui_config.UI_Non_Scene_Config["menu_button"]["maximum_size"])
         self.menu_button.setMinimumSize(ui_config.UI_Non_Scene_Config["menu_button"]["minimum_size"])
@@ -281,8 +284,14 @@ class MainApplication(QWidget):
         self.home_scene.wind_display.setText(f"Wind: {current_hour_data.wind_speed} {current_hour_data.wind_direction}")
         self.home_scene.message.setText(main_config.get_home_message_from_forecast(current_hour_data.forecasted_weather))
 
-        # sorry SQL thing
-        self.data_files.history_database.exec_add_snapshot(main_config.get_proper_formatted_current_date(), self.data_files.geocode_data.city, f"{datetime.datetime.now().time().strftime('%I:%M %p')} | UTC {current_timezone_diff_utc}", current_hour_data.temperature)
+        # sorry SQL thing; adds new data.
+        current_database_data = self.data_files.history_database.get_database_data()
+        if len(current_database_data) <= 0 or not main_config.snapshot_already_taken(sorted(current_database_data, key=lambda dictionary_data: dictionary_data["id"])[0]["date"]):
+            # if the city name is too long (over 11 characters), add 3 dots:
+            city = self.data_files.geocode_data.city
+            if len(city) > 11:
+                city = city[0:11] + ".."
+            self.data_files.history_database.exec_add_snapshot(main_config.get_proper_formatted_current_date(), city, f"{datetime.datetime.now().time().strftime('%I:%M %p')} | UTC {current_timezone_diff_utc}", current_hour_data.temperature)
         self.history_scene.make_snapshots(self.data_files.history_database.get_database_data(), self.data_files.history_database.database_record_size)
     def update_UI_alerts_data(self):
         self.warnings_scene.make_alerts(self.data_files.alerts_data, self.data_files.geocode_data)

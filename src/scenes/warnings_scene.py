@@ -9,6 +9,7 @@ import configs.ui_config as ui_config
 severity_to_color = {
     1:"QLabel {background-color: #A5000D; color: #FFFFFF}",
     2:"QLabel {background-color: #FF8800; color: #FFFFFF}",
+    3:"QLabel {background-color: #2D0000; color: #FFFFFF}"
 }
 
 
@@ -47,7 +48,7 @@ class Scene(ui_config.Base_Scene_ScrollArea):
 
     def add_to_scroll_area(self, QUIObject):
         self.scrolling_area_layout.addWidget(QUIObject)
-        self.list_of_widgets.append(QUIObject)
+        self.list_of_widgets_displayed.append(QUIObject)
 
     def make_alerts(self, alert_data, geocode_data):
         # clear all items

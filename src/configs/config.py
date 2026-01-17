@@ -51,6 +51,21 @@ config = {
     },
 }
 
+months_to_number = {
+    "jan": 1,
+    "feb": 2,
+    "mar": 3,
+    "apr": 4,
+    "may": 5,
+    "jun": 6,
+    "jul": 7,
+    "aug": 8,
+    "sep": 9,
+    "oct": 1,
+    "nov": 1,
+    "dec": 1,
+}
+
 def number_from_percentage(main_data, percent):
     return int(main_data/100)*percent
 
@@ -108,6 +123,28 @@ def get_home_message_from_forecast(forecast):
         return random.choice(msgs[current_forecast])
     else:
         return random.choice(msgs)
+    
+def convert_datestr_to_data(datestr : str):
+    """
+    returns tuple of all INTs:
+        day, month, year
+        respectively.
+    """
+    data = datestr.split(' ')
+    month_num = months_to_number[data[0].lower()[0:3]]
+    day_num = int(data[1][0:2])
+    year_num = int(data[2])
+    return (day_num, month_num, year_num)
+
+def snapshot_already_taken(recent_snapshot_date):
+    recent_snapshot_date_data = convert_datestr_to_data(recent_snapshot_date)
+
+    current_datetime = datetime.datetime.now().date()
+    current_day = current_datetime.day
+    current_month = current_datetime.month
+    current_year = current_datetime.year
+
+    return current_day == recent_snapshot_date_data[0] and current_month == recent_snapshot_date_data[1] and current_year == recent_snapshot_date_data[2]
 
 class DataFiles:
     def __init__(self):
@@ -125,6 +162,9 @@ class DataFiles:
         self.geocode_data.state_name = self.save_data.state_name
         self.geocode_data.state_abbreviaton = self.save_data.state_abbreviaton
 
+    def exec_delete_query(self, id):
+        self.history_database.exec_query("remove_snapshot", id)
+
     # Helper Function
     def get_API_data(self, suggested_location : str):
         return self.get_geocode_API_data(suggested_location)
@@ -141,7 +181,10 @@ class DataFiles:
         """
         # geocode.xyz call to convert location to latt/longt coordinates.
         geocode_url = base_url_apis["geocode"]+suggested_location+"?geoit=JSON"
-        api_call_holder = requests.get(geocode_url)
+        try:
+            api_call_holder = requests.get(geocode_url)
+        except:
+            return (1,  f'An error occurred. Maybe no internet connection?')
         geocode_data = api_call_holder.json()
         # Check Cases
         if 'error' in geocode_data:
@@ -168,7 +211,10 @@ class DataFiles:
     def get_weather_API_data(self, latitude, longitude):
         # Get location weather BASE data
         weather_base_url = base_url_apis["weather"]+f'{str(latitude)},{str(longitude)}'
-        api_call_holder = requests.get(weather_base_url)
+        try:
+            api_call_holder = requests.get(weather_base_url)
+        except:
+            return (1,  f'An error occurred. Maybe no internet connection?')
         # Throttled Error Case
         if api_call_holder.status_code == weather_alerts_throttled_status_code:
             return (2, f'Weather data could not be retrieved. Please try again after one second.')
@@ -182,21 +228,30 @@ class DataFiles:
         alerts_url = base_url_apis["alerts"] + alerts_url[alerts_url.find('/',-10)+1:]
         
         # Get location weather FORECAST data
-        api_call_holder = requests.get(forecast_url)
+        try:
+            api_call_holder = requests.get(forecast_url)
+        except:
+            return (1,  f'An error occurred. Maybe no internet connection?')
         # Throttled Error Case
         if api_call_holder.status_code == weather_alerts_throttled_status_code:
             return (2, f'Weather data could not be retrieved. Please try again after one second.')
         weather_forecast_data = api_call_holder.json()
         
         # Get location weather FORECAST HOURLY data
-        api_call_holder = requests.get(forecast_hourly_url)
+        try:
+            api_call_holder = requests.get(forecast_hourly_url)
+        except:
+            return (1,  f'An error occurred. Maybe no internet connection?')
         # Throttled Error Case
         if api_call_holder.status_code == weather_alerts_throttled_status_code:
             return (2, f'Weather data could not be retrieved. Please try again after one second.')
         weather_forecast_hourly_data = api_call_holder.json()
         
         # Get location forecast ALERTS data
-        api_call_holder = requests.get(alerts_url)
+        try:
+            api_call_holder = requests.get(alerts_url)
+        except:
+            return (1,  f'An error occurred. Maybe no internet connection?')
         # Throttled Error Case
         if api_call_holder.status_code == weather_alerts_throttled_status_code:
             return (2, f'Weather data could not be retrieved. Please try again after one second.')

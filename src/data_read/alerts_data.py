@@ -2,6 +2,7 @@
 import datetime
 
 severe_ids = {
+    "Extreme": 3,
     "Severe": 2,
     "Moderate": 1,
 }

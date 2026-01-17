@@ -16,7 +16,7 @@ UI_Config = {
     "default": {
         "font": {
             "size": {
-                "small": 8,
+                "small": 9,
                 "normal": 15,
             },
             "QFont_normal": None,
@@ -260,7 +260,7 @@ class Base_Scene_ScrollArea(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.list_of_widgets = []
+        self.list_of_widgets_displayed = []
     
     def create_widgets(self):
         self.header = UI_TextLabel(UI_Base_Scene_ScrollArea_Config["header_default_txt"])#, .default_font)
@@ -296,9 +296,9 @@ class Base_Scene_ScrollArea(QWidget):
         self.setLayout(self.main_layout)
 
     def clear_scrolling_area_layout(self):
-        for widget in self.list_of_widgets:
+        for widget in self.list_of_widgets_displayed:
             widget.deleteLater()
-        self.list_of_widgets.clear()
+        self.list_of_widgets_displayed.clear()
 
     def update_amount_to_scene(self, amt, strtype):
         if amt <= 0:
