@@ -70,7 +70,7 @@ class MainApplication(QWidget):
         self.menu_button.setVisible(False)
         self.menu_widget.setMaximumWidth(ui_config.UI_Non_Scene_Config["menu_button"]["widget_holder_maximum_width"])
 
-        menu_button_qpixmap = QPixmap(os.path.join(main_config.base_directory[:-len("\\src")], "resource", "menu_icon.png"))
+        menu_button_qpixmap = QPixmap(os.path.join(main_config.base_directory, "resource", "menu_icon.png"))
         menu_button_icon = QIcon(menu_button_qpixmap)
         self.menu_button.setIcon(menu_button_icon)
 
@@ -336,7 +336,7 @@ class MainApplication(QWidget):
             raise KeyError("SCENE NOT VALID")
         self.scenes.setCurrentIndex(main_config.scenes_available[new_scene])
 app = QApplication([])
-ui_config.make_font()
+ui_config.make_font(main_config.base_directory)
 
 main_window = MainApplication()
 main_window.show()

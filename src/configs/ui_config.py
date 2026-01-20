@@ -10,7 +10,7 @@ from PyQt6.QtGui import QFont, QFontDatabase
 """
 PRIVATE VARIABLES IF NOT IN class.__init__()
 """
-default_font_directory = "resource/Roboto-Light.ttf"
+default_font_directory = "resource\\Roboto-Light.ttf"
 
 UI_Config = {
     "default": {
@@ -322,8 +322,9 @@ class Base_Scene_ScrollArea(QWidget):
 """
 DECLARE IN MAIN.PY.
 """
-def make_font():
-    qid = QFontDatabase.addApplicationFont(default_font_directory)
+def make_font(base_directory):
+    print(base_directory)
+    qid = QFontDatabase.addApplicationFont(base_directory + "\\" + default_font_directory)
     # There is only 1 child font of the given Font Family.
     UI_Config["default"]["font"]["QFont_normal"] = QFont(QFontDatabase.applicationFontFamilies(qid)[0])
     UI_Config["default"]["font"]["QFont_normal"].setPointSize(UI_Config["default"]["font"]["size"]["normal"])
