@@ -88,7 +88,7 @@ class MainApplication(QWidget):
 
         self.menu_widget.setStyleSheet("""
             QWidget {
-                background-color: #FFFFFF
+                background-color: #BCBCBC
             }
                                        
             QPushButton {
@@ -340,4 +340,5 @@ ui_config.make_font(main_config.base_directory)
 
 main_window = MainApplication()
 main_window.show()
+
 app.exec()
