@@ -336,9 +336,11 @@ class MainApplication(QWidget):
             raise KeyError("SCENE NOT VALID")
         self.scenes.setCurrentIndex(main_config.scenes_available[new_scene])
 app = QApplication([])
+app.setWindowIcon(QIcon(os.path.join(main_config.base_directory, "resource", "big_sun_icon.ico")))
 ui_config.make_font(main_config.base_directory)
 
 main_window = MainApplication()
 main_window.show()
 
 app.exec()
+
