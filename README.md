@@ -9,6 +9,8 @@ Creation of a basic Weather Application, with some quirks inspired by [CARROT](h
 Only locations in the United States are valid for this program; any other locations outside of the US will not be accepted (due to NWS only providing data in the US)
 Incomplete project. Will write the rest of the notes when completed. Screenshots will be provided as well upon completion.
 
+<img width="865" height="476" alt="designing" src="https://github.com/user-attachments/assets/82981670-382f-4296-b520-bad7d5770129" />
+
 ## Credits
 * [QT](https://www.qt.io/), a package meant for creating User Interfaces.
 * [CARROT](https://www.meetcarrot.com/weather/), the inspiration to make this application.
