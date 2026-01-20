@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QStackedLayout,
 )
+from PyQt6.QtGui import QIcon, QPixmap
 from scenes import (
     details_scene,
     welcome_scene,
@@ -17,8 +18,7 @@ from scenes import (
 import configs.config as main_config
 import configs.ui_config as ui_config
 import datetime
-#import inspect
-#import os
+import os
         
 class MainApplication(QWidget):
     def __init__(self):
@@ -43,7 +43,7 @@ class MainApplication(QWidget):
     def create_widgets(self):
         self.menu_widget = QWidget()
         self.menu_button_holder_widget = QWidget()
-        self.menu_button = ui_config.UI_Button(ui_config.UI_Non_Scene_Config["menu_button"]["default_txt"])
+        self.menu_button = ui_config.UI_Button("")
 
         self.home_button = ui_config.UI_Button(ui_config.UI_Non_Scene_Config["home_button"]["default_txt"])
         self.warnings_button = ui_config.UI_Button(ui_config.UI_Non_Scene_Config["warnings_button"]["default_txt"])
@@ -69,6 +69,38 @@ class MainApplication(QWidget):
         self.menu_widget.setVisible(False)
         self.menu_button.setVisible(False)
         self.menu_widget.setMaximumWidth(ui_config.UI_Non_Scene_Config["menu_button"]["widget_holder_maximum_width"])
+
+        menu_button_qpixmap = QPixmap(os.path.join(main_config.base_directory[:-len("\\src")], "resource", "menu_icon.png"))
+        menu_button_icon = QIcon(menu_button_qpixmap)
+        self.menu_button.setIcon(menu_button_icon)
+
+        self.menu_button.setStyleSheet("""                  
+            QPushButton {
+                background-color: transparent;
+                border: solid #0044BA;
+                border-width: 0px 0px 1px 0px;            
+            }
+                           
+            QPushButton:hover {
+                background-color: #DBDBDB;            
+            }
+        """)
+
+        self.menu_widget.setStyleSheet("""
+            QWidget {
+                background-color: #FFFFFF
+            }
+                                       
+            QPushButton {
+                background-color: transparent;
+                border: None;
+                padding: 5px 5px 5px 5px;         
+            }
+                           
+            QPushButton:hover {
+                background-color: #DBDBDB;            
+            }
+        """)
 
     def design_layouts(self):
         self.main_layout = QStackedLayout()
@@ -286,7 +318,7 @@ class MainApplication(QWidget):
 
         # sorry SQL thing; adds new data.
         current_database_data = self.data_files.history_database.get_database_data()
-        if len(current_database_data) <= 0 or not main_config.snapshot_already_taken(sorted(current_database_data, key=lambda dictionary_data: dictionary_data["id"])[0]["date"]):
+        if len(current_database_data) <= 0 or not main_config.snapshot_already_taken(sorted(current_database_data, key=lambda dictionary_data: dictionary_data["id"], reverse=True)[0]["date"]):
             # if the city name is too long (over 11 characters), add 3 dots:
             city = self.data_files.geocode_data.city
             if len(city) > 11:

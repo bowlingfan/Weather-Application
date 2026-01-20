@@ -9,11 +9,10 @@ from data_read.alerts_data import AlertsData
 from data_read.save_data import SaveData
 from data_read.history_data import HistoryDatabase
 import configs.msg_config as msg_config
+import os
 
-"""
-todo make a class to store all data variables.
-use CLASS TITLE to reference them because cross-filing is restricted with namespacing
-"""
+base_directory = os.path.dirname(__file__)[:-len("\\configs")]
+
 scenes_available = {
     "welcome_scene":0,
     "home_scene":1,
@@ -153,7 +152,7 @@ class DataFiles:
         self.weather_forecast_hourly_data : WeatherForecastHourlyData = None
         self.successful_location_txt : str = None # todo save data
         self.alerts_data : AlertsData = None
-        self.save_data : SaveData = SaveData()
+        self.save_data : SaveData = SaveData(base_directory)
         self.history_database : HistoryDatabase = HistoryDatabase()
 
     def update_geocode_with_save(self):

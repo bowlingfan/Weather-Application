@@ -84,7 +84,7 @@ class Scene(ui_config.Base_Scene_ScrollArea):
         widget_holder.setLayout(layout_holder)
         self.add_to_scroll_area(widget_holder)
 
-        self.header.setText(f'{records_amt} / 30 snapshots.')
+        self.header.setText(f'{records_amt} / 30 snapshots. (Snapshots made ONCE per day.)')
 
     def delete_button_clicked(self):
         id_to_delete = self.sender().parent().primary_key_id
